@@ -387,7 +387,9 @@ L'input texte en sortie contient le nombre de lignes affectées par la requête.
       <Property Name="InputStreamAOX" DataType="DynamicObjectAOX" Mandatory="True" />
       <Property Name="OutputStreamAOX_Debug" DataType="DynamicObjectAOX" Mandatory="False" />
       <Property Name="OutputStreamAOX_Result" DataType="DynamicObjectAOX" Mandatory="False" />
-      <Property Name="OutputStreamAOX_Text" DataType="ObjectAOX" Mandatory="False" /><Class Name="OperationAOX_OutputText_OperationList" Module="LibAOX">
+      <Property Name="OutputStreamAOX_Text" DataType="ObjectAOX" Mandatory="False" />
+    </Class>
+    <Class Name="OperationAOX_OutputText_OperationList" Module="LibAOX">
       <Documentation>Opération prenant en entrée une liste d'opérations OperationAOX_OutputText (liste de InputStreamAOX_Text_Operation).
 Les opérations sont exécutées dans l'ordre de la liste.
 </Documentation>

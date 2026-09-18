@@ -1,0 +1,194 @@
+import type { CompatibilityTable } from "./compatibilityTypes";
+
+/**
+ * Table explicite de compatibilité, construite uniquement à partir des
+ * fichiers de workflow réels fournis (SendMail / CreateZip / HTML_To_PDF
+ * avec OperationIterator). Chaque entrée cite l'exemple d'origine.
+ *
+ * Ne pas ajouter d'entrée par extrapolation : mieux vaut une table
+ * incomplète (avec avertissement explicite du moteur) qu'une règle inventée
+ * qui autoriserait silencieusement une connexion invalide en pratique.
+ */
+export const compatibilityTable: CompatibilityTable = {
+  // --- OperationAOX_OutputText_SendMail (exemple "SendMail") ---
+  "OperationAOX_OutputText_SendMail.InputStreamAOX": {
+    rule: { kind: "category", category: "InputStreamAOX_Text" },
+    observed: true,
+    note: "InputStreamAOX_Text_Operation branché en entrée principale.",
+  },
+  "OperationAOX_OutputText_SendMail.OutputStreamAOX_Text": {
+    rule: { kind: "category", category: "OutputStreamAOX_Text" },
+    observed: true,
+    note: "OutputStreamAOX_Text_File branché en sortie.",
+  },
+  "OperationAOX_OutputText_SendMail.SendMail_JoinedFile": {
+    rule: { kind: "categoryPrefix", prefix: "InputStreamAOX" },
+    observed: true,
+    note:
+      "Port liste : accepte indifféremment InputStreamAOX_Text_Operation, " +
+      "InputStreamAOX_Binary_Operation, InputStreamAOX_Image_Operation (4 pièces jointes de familles différentes).",
+  },
+
+  // --- OperationAOX_OutputText_ConvertBinaryToBase64 (Attachment 1) ---
+  "OperationAOX_OutputText_ConvertBinaryToBase64.InputStreamAOX": {
+    rule: { kind: "category", category: "InputStreamAOX_Binary" },
+    observed: true,
+    note: "InputStreamAOX_Binary_DBMedia_FromCode branché en entrée.",
+  },
+  "OperationAOX_OutputText_ConvertBinaryToBase64.OutputStreamAOX_Text": {
+    rule: { kind: "category", category: "OutputStreamAOX_Text" },
+    observed: true,
+    note: "OutputStreamAOX_Text_Memory branché en sortie.",
+  },
+
+  // --- OperationAOX_OutputText_HTMLT_To_HTML ---
+  "OperationAOX_OutputText_HTMLT_To_HTML.InputStreamAOX": {
+    rule: { kind: "category", category: "InputStreamAOX_Text" },
+    observed: true,
+    note: "InputStreamAOX_Text_File branché en entrée (template .htmlt).",
+  },
+  // HTMLT_Parameters : volontairement absent de cette table. Structurellement
+  // c'est un port normal (voir workflowParser), mais son contenu réel
+  // (KeyValueListAOX) est traité comme un blob de configuration opaque, pas
+  // comme un point de connexion du graphe visuel — donc aucune règle de
+  // compatibilité de branchement ne s'applique dessus dans l'éditeur.
+
+  // --- OperationAOX_OutputText_SQL_Export_CSV ---
+  "OperationAOX_OutputText_SQL_Export_CSV.InputStreamAOX": {
+    rule: { kind: "category", category: "InputStreamAOX_Text" },
+    observed: true,
+    note: "InputStreamAOX_Text_DBMedia_FromCode branché en entrée (requête stockée).",
+  },
+  "OperationAOX_OutputText_SQL_Export_CSV.OutputStreamAOX_Text": {
+    rule: { kind: "category", category: "OutputStreamAOX_Text" },
+    observed: true,
+    note: "OutputStreamAOX_Text_Memory branché en sortie.",
+  },
+
+  // --- OperationAOX_OutputBinary_HTML_To_PDF ---
+  "OperationAOX_OutputBinary_HTML_To_PDF.InputStreamAOX": {
+    rule: { kind: "category", category: "InputStreamAOX_Text" },
+    observed: true,
+    note: "InputStreamAOX_Text_Operation (vers HTMLT_To_HTML) branché en entrée : le PDF part d'une source HTML/texte.",
+  },
+  "OperationAOX_OutputBinary_HTML_To_PDF.OutputStreamAOX_Binary": {
+    rule: { kind: "category", category: "OutputStreamAOX_Binary" },
+    observed: true,
+    note: "OutputStreamAOX_Binary_Memory branché en sortie.",
+  },
+
+  // --- OperationAOX_OutputImage_ConvertToFormattedImage ---
+  "OperationAOX_OutputImage_ConvertToFormattedImage.InputStreamAOX": {
+    rule: { kind: "category", category: "InputStreamAOX_Image" },
+    observed: true,
+    note: "InputStreamAOX_Image_Operation branché en entrée.",
+  },
+  "OperationAOX_OutputImage_ConvertToFormattedImage.ImageAOXFormat": {
+    rule: { kind: "category", category: "ImageAOXFormat" },
+    observed: true,
+    note: "ImageAOXFormat_WebP / _JPEG / _TIFF / _PNG observés selon les branches.",
+  },
+  "OperationAOX_OutputImage_ConvertToFormattedImage.OutputStreamAOX_Image": {
+    rule: { kind: "category", category: "OutputStreamAOX_Image" },
+    observed: true,
+    note: "OutputStreamAOX_Image_Memory branché en sortie.",
+  },
+
+  // --- OperationAOX_OutputImage_Resize ---
+  "OperationAOX_OutputImage_Resize.InputStreamAOX": {
+    rule: { kind: "category", category: "InputStreamAOX_Image" },
+    observed: true,
+    note: "InputStreamAOX_Image_Operation branché en entrée.",
+  },
+
+  // --- OperationAOX_OutputImage_Extend ---
+  "OperationAOX_OutputImage_Extend.InputStreamAOX": {
+    rule: { kind: "category", category: "InputStreamAOX_Image" },
+    observed: true,
+    note: "InputStreamAOX_Image_Operation branché en entrée.",
+  },
+
+  // --- OperationAOX_OutputImage_HTML_To_Image ---
+  // Cas notable : bien qu'appartenant à la famille "Image", ce port attend
+  // une entrée TEXTE (la source HTML à rasteriser), pas une image. Preuve
+  // directe que la famille de sortie d'une opération ne détermine PAS la
+  // famille attendue par ses ports d'entrée.
+  "OperationAOX_OutputImage_HTML_To_Image.InputStreamAOX": {
+    rule: { kind: "category", category: "InputStreamAOX_Text" },
+    observed: true,
+    note: "InputStreamAOX_Text_Operation (vers HTMLT_To_HTML) branché en entrée.",
+  },
+
+  // --- OperationAOX_OutputBinary_CreateZip ---
+  "OperationAOX_OutputBinary_CreateZip.InputStreamAOX": {
+    rule: { kind: "category", category: "InputStreamAOX_None" },
+    observed: true,
+    note: "InputStreamAOX_None_ListInput branché en entrée (conteneur générique du contenu du zip).",
+  },
+  "OperationAOX_OutputBinary_CreateZip.OutputStreamAOX_Binary": {
+    rule: { kind: "category", category: "OutputStreamAOX_Binary" },
+    observed: true,
+    note: "OutputStreamAOX_Binary_File branché en sortie.",
+  },
+
+  // --- InputStreamAOX_None_ListInput (liste hétérogène / wildcard) ---
+  "InputStreamAOX_None_ListInput.ListInput": {
+    rule: { kind: "categoryPrefix", prefix: "InputStreamAOX" },
+    observed: true,
+    note:
+      "3 InputStreamAOX_Image_Operation observés dans l'exemple CreateZip ; le nom de Category " +
+      '("None") et le comportement dans SendMail_JoinedFile suggèrent un vrai wildcard multi-famille.',
+  },
+
+  // --- InputStreamAOX_Text_ListInput (liste homogène, famille Text) ---
+  "InputStreamAOX_Text_ListInput.ListInput": {
+    rule: { kind: "category", category: "InputStreamAOX_Text" },
+    observed: true,
+    note:
+      "Observé dans l'exemple HTML_To_PDF/Iterator : DBMedia_FromCode + 3x Text_Operation, " +
+      "tous de Category InputStreamAOX_Text.",
+  },
+
+  // --- OperationAOX_OutputText_Concatenation ---
+  "OperationAOX_OutputText_Concatenation.InputStreamAOX": {
+    rule: { kind: "category", category: "InputStreamAOX_Text" },
+    observed: true,
+    note: "InputStreamAOX_Text_ListInput branché en entrée (qui est lui-même de Category InputStreamAOX_Text).",
+  },
+
+  // --- OperationAOX_OutputText_Inclusion ---
+  "OperationAOX_OutputText_Inclusion.InputStreamAOX": {
+    rule: { kind: "category", category: "InputStreamAOX_Text" },
+    observed: true,
+    note: "InputStreamAOX_Text_File branché en entrée principale.",
+  },
+  "OperationAOX_OutputText_Inclusion.InputStreamAOX_Include": {
+    rule: { kind: "category", category: "InputStreamAOX_Text" },
+    observed: true,
+    note: "InputStreamAOX_Text_Operation (vers Concatenation) branché sur le second port d'entrée.",
+  },
+
+  // --- OperationAOX_OutputText_OperationIterator_HtmlPages ---
+  "OperationAOX_OutputText_OperationIterator_HtmlPages.InputStreamAOX": {
+    rule: { kind: "category", category: "InputStreamAOX_Text" },
+    observed: true,
+    note: "InputStreamAOX_Text_File branché (template conteneur des pages).",
+  },
+  "OperationAOX_OutputText_OperationIterator_HtmlPages.InputStreamAOX_Row": {
+    rule: { kind: "category", category: "InputStreamAOX_Text" },
+    observed: true,
+    note: "InputStreamAOX_Text_File branché (template de ligne).",
+  },
+  "OperationAOX_OutputText_OperationIterator_HtmlPages.InputStreamAOX_ItemDataList": {
+    rule: { kind: "category", category: "InputStreamAOX_ItemDataList" },
+    observed: true,
+    note: "InputStreamAOX_ItemDataList_Operation branché (source des items à itérer).",
+  },
+
+  // --- OperationAOX_OutputItemDataList_Read_SQL ---
+  "OperationAOX_OutputItemDataList_Read_SQL.InputStreamAOX": {
+    rule: { kind: "category", category: "InputStreamAOX_Text" },
+    observed: true,
+    note: "InputStreamAOX_Text_Static branché (la requête SQL elle-même, en texte).",
+  },
+};
