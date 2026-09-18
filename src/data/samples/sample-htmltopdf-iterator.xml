@@ -1,0 +1,216 @@
+<ObjectAOX Category="OperationAOX_OutputBinary" Type="OperationAOX_OutputBinary_HTML_To_PDF">
+
+  <Param Name="sPdfPageOrientation" DataType="String" Value="Portrait" ></Param>
+  <Param Name="bCanEditContent" DataType="Boolean" Value="1" ></Param>
+  <Param Name="bJpegCompressionEnabled" DataType="Boolean" Value="1" ></Param>
+
+  <!--<Param Name="OutputStreamAOX_HTML" DataType="DynamicObjectAOX">
+    <ObjectAOX Category="OutputStreamAOX_Text" Type="OutputStreamAOX_Text_File">
+      <Param Name="FilePath" DataType="String" Value="">
+        <AttributeTranslation attribut="Value">
+          %resource_folder%\WIP\Catalogue_Panier_<GetVariable Name="Global.Panier_Id"></GetVariable>_(%timestamp%).html
+        </AttributeTranslation>
+      </Param>
+    </ObjectAOX>
+  </Param>-->
+
+  <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+    <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_Operation">
+      <Param Name="OperationAOX" DataType="DynamicObjectAOX">
+        <ObjectAOX Category="OperationAOX_OutputText" Type="OperationAOX_OutputText_HTMLT_To_HTML">
+
+          <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+            <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_Operation">
+              <Param Name="OperationAOX" DataType="DynamicObjectAOX">
+                <ObjectAOX Category="OperationAOX_OutputText" Type="OperationAOX_OutputText_Inclusion">
+
+                  <!--Paramètres-->
+
+                  <Param Name="TagToReplace" DataType="String" Value="TEMPLATE_CLIENT_CONTENT" />
+
+                  <Param Name="InputStreamAOX_Include" DataType="DynamicObjectAOX">
+                    <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_Operation">
+                      <Param Name="OperationAOX" DataType="DynamicObjectAOX">
+                        <ObjectAOX Category="OperationAOX_OutputText" Type="OperationAOX_OutputText_Concatenation">
+
+                          <!--Paramètres-->
+
+   <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+                            <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_ListInput">
+                              <Param Name="ListInput" DataType="ObjectAOXList">
+                                <ListObjectAOX>
+
+                                  <!-- Cover recto/verso -->
+
+                                  <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_DBMedia_FromCode">
+                                    <Param Name="sMediaAppCode" DataType="String" Value="HTMLT_TEMPLATE_CLIENT_COVER" />
+                                  </ObjectAOX>
+
+                                  <!-- Listing produits -->
+
+                                  <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_Operation">
+                                    <Param Name="OperationAOX" DataType="DynamicObjectAOX">
+
+                                      <ObjectAOX Category="OperationAOX_OutputText" Type="OperationAOX_OutputText_OperationIterator_HtmlPages">
+
+                                        <Param Name="InputStreamAOX_ItemDataList" DataType="DynamicObjectAOX">
+                                          <ObjectAOX Category="InputStreamAOX_ItemDataList" Type="InputStreamAOX_ItemDataList_Operation">
+                                            <Param Name="OperationAOX" DataType="DynamicObjectAOX">
+
+                                              <ObjectAOX Category="OperationAOX_OutputItemDataList" Type="OperationAOX_OutputItemDataList_Read_SQL">
+
+                                                <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+                                                  <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_Static">
+                                                    <Param Name="sText" DataType="String" Value="SELECT * FROM Panier WHERE Panier_Id = 154">
+                                                                                                          </Param>
+                                                  </ObjectAOX>
+                                                </Param>
+
+                                              </ObjectAOX>
+   </Param>
+                                          </ObjectAOX>
+                                        </Param>
+
+                                        <Param Name="nFirstPageNumber" DataType="Integer" Value="2"></Param>
+                                        <Param Name="nbItemDataPerPage" DataType="Integer" Value="7"></Param>
+
+                                        <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+                                          <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_File">
+                                            <Param Name="FilePath" DataType="String" Value="%resource_folder%\CLIENT\HTMLT_TEMPLATE_CLIENT_LISTING_PRODUIT_PAGE_CONTAINER.htmlt" />
+                                          </ObjectAOX>
+                                        </Param>
+
+                                        <Param Name="InputStreamAOX_Row" DataType="DynamicObjectAOX">
+                                          <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_File">
+                                            <Param Name="FilePath" DataType="String" Value="%resource_folder%\CLIENT\HTMLT_TEMPLATE_CLIENT_LISTING_PRODUIT_PAGE_ROW.htmlt" />
+                                          </ObjectAOX>
+                                        </Param>
+
+                                      </ObjectAOX>
+
+                                    </Param>
+                                  </ObjectAOX>
+
+                                  <!-- Catalogue produits -->
+
+                                  <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_Operation">
+                                    <Param Name="OperationAOX" DataType="DynamicObjectAOX">
+
+                                      <ObjectAOX Category="OperationAOX_OutputText" Type="OperationAOX_OutputText_OperationIterator_HtmlPages">
+
+ <Param Name="InputStreamAOX_ItemDataList" DataType="DynamicObjectAOX">
+                                          <ObjectAOX Category="InputStreamAOX_ItemDataList" Type="InputStreamAOX_ItemDataList_Operation">
+                                            <Param Name="OperationAOX" DataType="DynamicObjectAOX">
+
+                                              <ObjectAOX Category="OperationAOX_OutputItemDataList" Type="OperationAOX_OutputItemDataList_Read_SQL">
+
+                                                <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+                                                  <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_Static">
+                                                    <Param Name="sText" DataType="String" Value="SELECT * FROM Panier WHERE Panier_Id = 154">
+                                                    </Param>
+                                                  </ObjectAOX>
+                                                </Param>
+
+                                              </ObjectAOX>
+
+                                            </Param>
+                                          </ObjectAOX>
+                                        </Param>
+
+                                        <Param Name="nbItemDataPerPage" DataType="Integer" Value="4"></Param>
+
+                                        <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+                                          <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_File">
+                                            <Param Name="FilePath" DataType="String" Value="%resource_folder%\CLIENT\HTMLT_TEMPLATE_CLIENT_CATALOGUE_PRODUIT_PAGE_CONTAINER.htmlt" />
+                                          </ObjectAOX>
+                                        </Param>
+
+                                        <Param Name="InputStreamAOX_Row" DataType="DynamicObjectAOX">
+                                          <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_File">
+                                            <Param Name="FilePath" DataType="String" Value="%resource_folder%\CLIENT\HTMLT_TEMPLATE_CLIENT_CATALOGUE_PRODUIT_PAGE_ROW.htmlt" />
+                                          </ObjectAOX>
+                                        </Param>
+
+                                      </ObjectAOX>
+    </Param>
+                                  </ObjectAOX>
+
+                                  <!-- Fiches produits -->
+
+                                  <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_Operation">
+                                    <Param Name="OperationAOX" DataType="DynamicObjectAOX">
+
+                                      <ObjectAOX Category="OperationAOX_OutputText" Type="OperationAOX_OutputText_OperationIterator_HtmlPages">
+
+                                        <Param Name="InputStreamAOX_ItemDataList" DataType="DynamicObjectAOX">
+                                          <ObjectAOX Category="InputStreamAOX_ItemDataList" Type="InputStreamAOX_ItemDataList_Operation">
+                                            <Param Name="OperationAOX" DataType="DynamicObjectAOX">
+
+                                              <ObjectAOX Category="OperationAOX_OutputItemDataList" Type="OperationAOX_OutputItemDataList_Read_SQL">
+
+                                                <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+                                                  <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_Static">
+                                                    <Param Name="sText" DataType="String" Value="SELECT * FROM Panier WHERE Panier_Id = 154">
+
+                                                    </Param>
+                                                  </ObjectAOX>
+                                                </Param>
+
+                                              </ObjectAOX>
+  </Param>
+                                          </ObjectAOX>
+                                        </Param>
+
+                                        <Param Name="nbItemDataPerPage" DataType="Integer" Value="1"></Param>
+
+                                        <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+                                          <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_File">
+                                            <Param Name="FilePath" DataType="String" Value="%resource_folder%\CLIENT\HTMLT_TEMPLATE_CLIENT_FICHE_PRODUIT_PAGE_CONTAINER.htmlt" />
+                                          </ObjectAOX>
+                                        </Param>
+
+                                        <Param Name="InputStreamAOX_Row" DataType="DynamicObjectAOX">
+                                          <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_File">
+                                            <Param Name="FilePath" DataType="String" Value="%resource_folder%\CLIENT\HTMLT_TEMPLATE_CLIENT_FICHE_PRODUIT_PAGE_ROW.htmlt" />
+                                          </ObjectAOX>
+                                        </Param>
+
+                                      </ObjectAOX>
+
+                                    </Param>
+                                  </ObjectAOX>
+
+                                </ListObjectAOX>
+                              </Param>
+                            </ObjectAOX>
+                          </Param>
+
+                        </ObjectAOX>
+                      </Param>
+                    </ObjectAOX>
+                  </Param>
+
+                  <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+                    <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_File">
+                      <Param Name="FilePath" DataType="String" Value="%resource_folder%\CLIENT\HTMLT_TEMPLATE_CLIENT.htmlt" />
+                    </ObjectAOX>
+                  </Param>
+
+                </ObjectAOX>
+              </Param>
+            </ObjectAOX>
+          </Param>
+
+        </ObjectAOX>
+      </Param>
+    </ObjectAOX>
+  </Param>
+
+  <Param Name="OutputStreamAOX_Binary" DataType="DynamicObjectAOX">
+    <ObjectAOX Category="OutputStreamAOX_Binary" Type="OutputStreamAOX_Binary_Memory">
+      <Param Name="OutputLabel" DataType="String" Value="AOX_Generative_Panier_154.pdf">
+      </Param>
+    </ObjectAOX>
+  </Param>
+
+</ObjectAOX>

@@ -1,0 +1,314 @@
+<ObjectAOX Category="OperationAOX_OutputBinary" Type="OperationAOX_OutputBinary_CreateZip">
+
+  <!--Paramètres-->
+
+  <!--<Param Name="CompressionMethod" DataType="String" Value="Deflate" />-->
+
+  <!--Input/Output de base-->
+
+  <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+    <ObjectAOX Category="InputStreamAOX_None" Type="InputStreamAOX_None_ListInput">
+      <Param Name="ListInput" DataType="DynamicObjectAOX">
+        <ListObjectAOX>
+
+          <!-- Input 1 -->
+
+          <ObjectAOX Category="InputStreamAOX_Image" Type="InputStreamAOX_Image_Operation">
+            <Param Name="OperationAOX" DataType="DynamicObjectAOX">
+
+              <ObjectAOX Category="OperationAOX_OutputImage" Type="OperationAOX_OutputImage_ConvertToFormattedImage">
+
+                <!--Paramètres-->
+
+                <Param Name="ImageAOXFormat" DataType="DynamicObjectAOX">
+                  <ObjectAOX Category="ImageAOXFormat" Type="ImageAOXFormat_JPEG">
+                    <Param Name="JpegQuality" DataType="Integer" Value="95" />
+                  </ObjectAOX>
+                </Param>
+  <!--Input/Output de base-->
+
+                <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+                  <ObjectAOX Category="InputStreamAOX_Image" Type="InputStreamAOX_Image_Operation">
+                    <Param Name="OperationAOX" DataType="DynamicObjectAOX">
+
+                      <ObjectAOX Category="OperationAOX_OutputImage" Type="OperationAOX_OutputImage_HTML_To_Image">
+
+                        <!--Paramètres-->
+
+                        <Param Name="nWidthPixel" DataType="Integer" Value="1000" ></Param>
+                        <Param Name="nHeightPixel" DataType="Integer" Value="1620" ></Param>
+
+                        <!--Input/Output de base-->
+ <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+                          <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_Operation">
+                            <Param Name="OperationAOX" DataType="DynamicObjectAOX">
+
+                              <ObjectAOX Category="OperationAOX_OutputText" Type="OperationAOX_OutputText_HTMLT_To_HTML">
+
+                                <!--Paramètres-->
+
+                                <Param Name="HTMLT_Parameters" DataType="ObjectAOX">
+                                  <ObjectAOX Category="ObjectAOX" Type="KeyValueListAOX">
+                                    <Param Name="Dictionary" DataType="None">
+                                      <KeyValueListAOX>
+
+                                        <Param Name ="XMLKeyValueList" DataType ="None">
+                                          <XMLKeyValue Key="GraphTitle" Value="Your results"></XMLKeyValue>
+                                          <XMLKeyValue Key="GraphText" Value="Discover your tt."></XMLKeyValue>
+                                          <XMLKeyValue Key="GraphAge" Value="33"></XMLKeyValue>
+                                          <XMLKeyValue Key="urlImage" Value="https://monentreprise.com/bg_bloc_anim-home.jpg"></XMLKeyValue>
+                                          <XMLKeyValue Key="UserMail" Value="max@monentreprise.com"></XMLKeyValue>
+                                          <XMLKeyValue Key="JsonValues" Value="">
+                                            <AttributeTranslation attribut="Value">
+{ "recordList": [
+                                              { "name": "Radiance", "value": "5.0" },
+                                              { "name": "Firmness", "value": "6.0" },
+                                              { "name": "Darkspots", "value": "2.0" },
+                                              { "name": "Finelines", "value": "10.0" },
+                                              { "name": "Redness", "value": "5.0" },
+                                              { "name": "Blemishes", "value": "1.0" },
+                                              { "name": "Eyecontour", "value": "8.5" },
+                                              { "name": "Wrinkles", "value": "7.0" }
+                                              ]}
+                                            </AttributeTranslation>
+                                          </XMLKeyValue>
+                                        </Param>
+
+                                      </KeyValueListAOX>
+                                    </Param>
+                                  </ObjectAOX>
+                                </Param>
+
+                                <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+                                  <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_File">
+                                    <Param Name="FilePath" DataType="String" Value="%resource_folder%\Graph_1.htmlt" />
+                                  </ObjectAOX>
+                                </Param>
+                                 </ObjectAOX>
+
+                            </Param>
+                          </ObjectAOX>
+                        </Param>
+
+                      </ObjectAOX>
+
+                    </Param>
+                  </ObjectAOX>
+                </Param>
+
+              </ObjectAOX>
+
+            </Param>
+          </ObjectAOX>
+
+          <!-- Input 2 -->
+
+ <ObjectAOX Category="InputStreamAOX_Image" Type="InputStreamAOX_Image_Operation">
+            <Param Name="OperationAOX" DataType="DynamicObjectAOX">
+
+              <ObjectAOX Category="OperationAOX_OutputImage" Type="OperationAOX_OutputImage_ConvertToFormattedImage">
+
+                <!--Paramètres-->
+
+                <Param Name="ImageAOXFormat" DataType="DynamicObjectAOX">
+                  <ObjectAOX Category="ImageAOXFormat" Type="ImageAOXFormat_TIFF">
+                    <Param Name="CompressionMethod" DataType="String" Value="NoCompression" />
+                  </ObjectAOX>
+                </Param>
+
+                <!--Input/Output de base-->
+
+                <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+                  <ObjectAOX Category="InputStreamAOX_Image" Type="InputStreamAOX_Image_Operation">
+                    <Param Name="OperationAOX" DataType="DynamicObjectAOX">
+ <ObjectAOX Category="OperationAOX_OutputImage" Type="OperationAOX_OutputImage_HTML_To_Image">
+
+                        <!--Paramètres-->
+
+                        <Param Name="nWidthPixel" DataType="Integer" Value="1000" />
+                        <Param Name="nHeightPixel" DataType="Integer" Value="1400" />
+
+                        <!--Input/Output de base-->
+
+                        <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+                          <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_Operation">
+                            <Param Name="OperationAOX" DataType="DynamicObjectAOX">
+
+                              <ObjectAOX Category="OperationAOX_OutputText" Type="OperationAOX_OutputText_HTMLT_To_HTML">  <!--Paramètres-->
+
+                                <Param Name="HTMLT_Parameters" DataType="ObjectAOX">
+                                  <ObjectAOX Category="ObjectAOX" Type="KeyValueListAOX">
+                                    <Param Name="Dictionary" DataType="None">
+                                      <KeyValueListAOX>
+
+                                        <Param Name="JSONKeyValueList" DataType="None" Value='
+                                              [
+                                                        { "name": "JsonValues", "value": { "recordList": [
+ { "name": "Lack of Firmness", "cssClass": "var_under-eye-wrinkles", "value": "5.0", "cx": "0.00000", "cy": "-30.00000" },
+                                                                                                { "name": "Pores visibility", "cssClass": "var_pores-visibility", "value": "6.0", "cx": "35.18242", "cy": "-28.05704"},
+                                                                                                { "name": "Fine Lines", "cssClass": "var_fine-lines", "value": "2.0", "cx": "43.87176", "cy": "10.01344"},
+                                                                                                { "name": "Deep wrinkles visibility", "cssClass": "var_deep-wrinkles", "value": "9.5", "cx": "32.54128", "cy": "67.57267"},
+                                                                                                { "name": "Under-eye wrinkles", "cssClass": "var_lack-radiance", "value": "5.0", "cx": "-19.52477", "cy": "40.54360"},
+                                                                                                { "name": "Lack of Radiance", "cssClass": "var_lack-firmness", "value": "1.0", "cx": "-73.11959", "cy": "16.68907"},
+                                                                                                { "name": "Dark spots intensity", "cssClass": "var_dark-spots-intensity", "value": "8.5", "cx": "-70.36483", "cy": "-56.11408"},
+                                                                                              ]
+                                                                                          }
+                                                                                      }
+                                                  ]' />    </KeyValueListAOX>
+                                    </Param>
+                                  </ObjectAOX>
+                                </Param>
+
+                                <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+                                  <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_File">
+                                    <Param Name="FilePath" DataType="String" Value="%resource_folder%\Graph_2.htmlt" />
+                                  </ObjectAOX>
+                                </Param>
+
+                              </ObjectAOX>
+
+                            </Param>
+                          </ObjectAOX>
+                        </Param>
+
+                      </ObjectAOX>
+  </Param>
+                  </ObjectAOX>
+                </Param>
+
+              </ObjectAOX>
+
+            </Param>
+          </ObjectAOX>
+
+          <!-- Input 3 -->
+
+          <ObjectAOX Category="InputStreamAOX_Image" Type="InputStreamAOX_Image_Operation">
+            <Param Name="OperationAOX" DataType="DynamicObjectAOX">
+
+              <ObjectAOX Category="OperationAOX_OutputImage" Type="OperationAOX_OutputImage_ConvertToFormattedImage">
+
+                <!--Paramètres-->
+<Param Name="ImageAOXFormat" DataType="DynamicObjectAOX">
+                  <ObjectAOX Category="ImageAOXFormat" Type="ImageAOXFormat_PNG">
+                  </ObjectAOX>
+                </Param>
+
+                <!--Input/Output de base-->
+
+                <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+                  <ObjectAOX Category="InputStreamAOX_Image" Type="InputStreamAOX_Image_Operation">
+                    <Param Name="OperationAOX" DataType="DynamicObjectAOX">
+
+                      <ObjectAOX Category="OperationAOX_OutputImage" Type="OperationAOX_OutputImage_Extend">
+
+                        Paramètres
+
+                        <Param Name="nWidthPixel" DataType="Integer" Value="1000" />
+                        <Param Name="nHeightPixel" DataType="Integer" Value="1200" />
+                        <Param Name="BackgroundColor" DataType="String" Value="
+#888888" />
+
+                        <!--Input/Output de base-->
+  <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+                          <ObjectAOX Category="InputStreamAOX_Image" Type="InputStreamAOX_Image_Operation">
+                            <Param Name="OperationAOX" DataType="DynamicObjectAOX">
+
+                              <ObjectAOX Category="OperationAOX_OutputImage" Type="OperationAOX_OutputImage_HTML_To_Image">
+
+                                <!--Paramètres-->
+
+                                <Param Name="nWidthPixel" DataType="Integer" Value="800" />
+                                <Param Name="nHeightPixel" DataType="Integer" Value="1000" />
+
+                                <!--Input/Output de base-->
+
+                                <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+                                  <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_Operation">
+                                    <Param Name="OperationAOX" DataType="DynamicObjectAOX">
+ <ObjectAOX Category="OperationAOX_OutputText" Type="OperationAOX_OutputText_HTMLT_To_HTML">
+
+                                        <!--Paramètres-->
+
+                                        <Param Name="HTMLT_Parameters" DataType="ObjectAOX">
+                                          <ObjectAOX Category="ObjectAOX" Type="KeyValueListAOX">
+                                            <Param Name="Dictionary" DataType="None">
+                                              <KeyValueListAOX>
+
+                                                <Param Name="JSONKeyValueList" DataType="None" Value='
+                                              [
+                                                        { "name": "Graph_Title", "value": "Your 8 scores" },
+                                                        { "name": "Graph_SubTitle", "value": "Max, a healthyn, perfect scores on the 8 dimensions" },
+                                                        { "name": "JsonTextValues", "value": { "recordList": [
+ { "name": "Luminosity",     "index": "0",   "value": "4",   "c1": "20.0001",  "c2": "168.4009", "c3": "20.0001",  "c4": "187.1558", "tX": "128", "tY": "124.4" },
+                                                                                                    { "name": "Balance",        "index": "1",   "value": "25",  "c1": "336.5425", "c2": "168.4009", "c3": "361.4898", "c4": "187.1558", "tX": "208", "tY": "124.4"  },
+                                                                                                    { "name": "Firmness",       "index": "2",   "value": "21",  "c1": "20.0001",  "c2": "265.401",  "c3": "20.0001",  "c4": "284.156",  "tX": "128", "tY": "210.3"  },
+                                                                                                    { "name": "Uniformity",     "index": "3",   "value": "100", "c1": "325.2192", "c2": "265.401",  "c3": "361.4898", "c4": "284.156",  "tX": "208", "tY": "210.3"  },
+                                                                                                    { "name": "Smoothness",     "index": "4",   "value": "36",  "c1": "20.0001",  "c2": "360.4013", "c3": "20.0001",  "c4": "379.1563", "tX": "128", "tY": "314.5"  },
+                                                                                                    { "name": "Refinement",     "index": "5",   "value": "0",   "c1": "321.0728", "c2": "360.4013", "c3": "361.4898", "c4": "379.1563", "tX": "208", "tY": "314.5"  },
+                                                                                                    { "name": "Low Reactivity", "index": "6",   "value": "61",  "c1": "20.0001",  "c2": "450.4005", "c3": "20.0001",  "c4": "469.1555", "tX": "128", "tY": "400.4"  },
+                                                                                                    { "name": "Purity",         "index": "7",   "value": "34",  "c1": "352.311",  "c2": "450.4005", "c3": "361.4898", "c4": "469.1555", "tX": "208", "tY": "400.4"  }
+                                                                                              ]
+                                                                                          }
+                                                                                      },
+ { "name": "JsonRectValues", "value": { "recordList": [
+                                                                                                    { "index": "0",    "nYLine": "72",   "class": "st2" },
+                                                                                                    { "index": "10",   "nYLine": "64",   "class": "st3" },
+                                                                                                    { "index": "20",   "nYLine": "56",   "class": "st4" },
+                                                                                                    { "index": "30",   "nYLine": "48",   "class": "st5" },
+                                                                                                    { "index": "40",   "nYLine": "40",   "class": "st6" },
+                                                                                                    { "index": "50",   "nYLine": "32",   "class": "st7" },
+                                                                                                    { "index": "60",   "nYLine": "24",   "class": "st8" },
+                                                                                                    { "index": "70",   "nYLine": "16",   "class": "st9" },
+                                                                                                    { "index": "80",   "nYLine": "8",   "class": "st10" },
+                                                                                                    { "index": "90",   "nYLine": "0",   "class": "st11" }
+                                                                                              ]
+                                                                                          }
+                                                                                      }
+                                                  ]' />
+
+                                              </KeyValueListAOX>
+                                            </Param>
+                                          </ObjectAOX>
+                                        </Param>
+
+ <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+                                          <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_File">
+                                            <Param Name="FilePath" DataType="String" Value="%resource_folder%\Graph_3.htmlt" />
+                                          </ObjectAOX>
+                                        </Param>
+
+                                      </ObjectAOX>
+
+                                    </Param>
+                                  </ObjectAOX>
+                                </Param>
+
+                              </ObjectAOX>
+
+                            </Param>
+                          </ObjectAOX>
+                        </Param>
+
+                      </ObjectAOX>
+ </Param>
+                  </ObjectAOX>
+                </Param>
+
+              </ObjectAOX>
+
+            </Param>
+          </ObjectAOX>
+
+        </ListObjectAOX>
+      </Param>
+    </ObjectAOX>
+  </Param>
+
+  <Param Name="OutputStreamAOX_Binary" DataType="DynamicObjectAOX">
+    <ObjectAOX Category="OutputStreamAOX_Binary" Type="OutputStreamAOX_Binary_File">
+      <Param Name="FilePath" DataType="String" Value="%resource_folder%\Panier_%timestamp%.zip" />
+    </ObjectAOX>
+  </Param>
+
+</ObjectAOX>
