@@ -32,6 +32,14 @@ export interface CompatibilityEntry {
   observed: boolean;
   /** Court commentaire : d'où vient cette règle (quel exemple, quel raisonnement). */
   note: string;
+  /**
+   * true si ce port doit être créé en mode "liste" (<ListObjectAOX>) lors
+   * d'une première connexion faite depuis l'éditeur (par opposition à un
+   * port chargé depuis un fichier existant, où le caractère liste est
+   * toujours déduit structurellement par le parser, jamais de cette table).
+   * Absent ou false = port simple par défaut.
+   */
+  isList?: boolean;
 }
 
 /** Clé de la table : "<TypeDeLaClassePropriétaire>.<NomDuPort>". */

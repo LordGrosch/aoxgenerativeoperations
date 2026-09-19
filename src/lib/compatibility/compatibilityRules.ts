@@ -24,6 +24,7 @@ export const compatibilityTable: CompatibilityTable = {
   "OperationAOX_OutputText_SendMail.SendMail_JoinedFile": {
     rule: { kind: "categoryPrefix", prefix: "InputStreamAOX" },
     observed: true,
+    isList: true,
     note:
       "Port liste : accepte indifféremment InputStreamAOX_Text_Operation, " +
       "InputStreamAOX_Binary_Operation, InputStreamAOX_Image_Operation (4 pièces jointes de familles différentes).",
@@ -135,6 +136,7 @@ export const compatibilityTable: CompatibilityTable = {
   "InputStreamAOX_None_ListInput.ListInput": {
     rule: { kind: "categoryPrefix", prefix: "InputStreamAOX" },
     observed: true,
+    isList: true,
     note:
       "3 InputStreamAOX_Image_Operation observés dans l'exemple CreateZip ; le nom de Category " +
       '("None") et le comportement dans SendMail_JoinedFile suggèrent un vrai wildcard multi-famille.',
@@ -144,6 +146,7 @@ export const compatibilityTable: CompatibilityTable = {
   "InputStreamAOX_Text_ListInput.ListInput": {
     rule: { kind: "category", category: "InputStreamAOX_Text" },
     observed: true,
+    isList: true,
     note:
       "Observé dans l'exemple HTML_To_PDF/Iterator : DBMedia_FromCode + 3x Text_Operation, " +
       "tous de Category InputStreamAOX_Text.",

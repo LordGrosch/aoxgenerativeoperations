@@ -4,13 +4,12 @@ import type { CatalogIndex } from "../lib/catalog/catalogTypes";
 import { parseCatalog } from "../lib/catalog/catalogParser";
 import { parseWorkflowXml } from "../lib/parser/workflowParser";
 import { generateWorkflowXml } from "../lib/generator/workflowGenerator";
-
+import { validateWorkflow } from "../lib/validation/validateWorkflow";
+import type { ValidationResult } from "../lib/validation/validationTypes";
 import { computeAutoLayout } from "../lib/layout/autoLayout";
 import { pruneUnreachableNodes } from "../lib/model/types";
 import type { ParamValue, WorkflowGraph, WorkflowNode } from "../lib/model/types";
-import { checkPortCompatibility } from "../lib/compatibility/compatibilityEngine";
-import { ValidationResult } from "../lib/validation/validationTypes";
-import { validateWorkflow } from "../lib/validation/validateWorkflow";
+import { checkPortCompatibility, isPortListCapable } from "../lib/compatibility/compatibilityEngine";
 
 type Position = { x: number; y: number };
 type ConnectResult = { ok: true } | { ok: false; reason: string };
@@ -170,7 +169,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     if (!existingPort) {
       parent.ports[portName] = {
         name: portName,
-        isList: false,
+        isList: isPortListCapable(parent.type, portName),
         connectedNodeIds: [childId],
         declaredDataType: "DynamicObjectAOX",
       };

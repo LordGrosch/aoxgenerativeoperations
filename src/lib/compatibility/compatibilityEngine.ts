@@ -18,6 +18,18 @@ export type CompatibilityResult =
   /** Aucune règle connue : on bloque par défaut, mais en le disant clairement. */
   | { status: "unknown"; reason: string };
 
+/**
+ * Indique si un port doit être créé en mode "liste" lors d'une première
+ * connexion faite depuis l'éditeur (jamais utilisé pour un fichier chargé :
+ * le parser déduit toujours ça structurellement, voir workflowParser).
+ * Les ports "passerelle" (*_Operation.OperationAOX) sont toujours simples.
+ */
+export function isPortListCapable(ownerType: string, portName: string): boolean {
+  if (resolveGatewayRule(ownerType, portName)) return false;
+  const key = `${ownerType}.${portName}` as const;
+  return compatibilityTable[key]?.isList ?? false;
+}
+
 function ruleMatches(rule: CompatibilityRule, candidateCategory: string): boolean {
   switch (rule.kind) {
     case "category":

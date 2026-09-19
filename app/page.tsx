@@ -27,7 +27,7 @@ export default function Home() {
     <div className="h-screen flex flex-col">
       <Toolbar />
       <div className="flex-1 flex overflow-hidden">
-        <div className="w-64 border-r overflow-hidden shrink-0">
+        <div className="w-80 border-r overflow-hidden shrink-0">
           <Palette />
         </div>
         <div className="flex-1 flex flex-col min-w-0">
