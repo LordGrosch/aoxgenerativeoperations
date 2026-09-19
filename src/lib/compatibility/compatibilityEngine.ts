@@ -31,6 +31,42 @@ export function isPortListCapable(ownerType: string, portName: string): boolean 
   return compatibilityTable[key]?.isList ?? false;
 }
 
+export interface ConnectionDescription {
+  status: CompatibilityResult["status"];
+  /** Texte à afficher au survol d'une arête : la note de la règle si elle
+   * existe (le "pourquoi" de la compatibilité), sinon la raison de blocage. */
+  note: string;
+}
+
+/**
+ * Décrit une connexion réelle du graphe pour affichage (survol d'une
+ * arête) : reprend le statut de checkPortCompatibility et y ajoute, quand
+ * la connexion est compatible, la note d'origine de la règle (le contexte
+ * qui a permis de la définir), plutôt qu'un simple "OK" muet.
+ */
+export function describeConnection(
+  ownerType: string,
+  portName: string,
+  candidateCategory: string
+): ConnectionDescription {
+  const result = checkPortCompatibility(ownerType, portName, candidateCategory);
+
+  if (result.status !== "compatible") {
+    return { status: result.status, note: result.reason };
+  }
+
+  if (resolveGatewayRule(ownerType, portName)) {
+    return {
+      status: "compatible",
+      note: `Passerelle standard : "${portName}" relie vers une opération de sortie de la famille correspondante.`,
+    };
+  }
+
+  const key = `${ownerType}.${portName}` as const;
+  const note = compatibilityTable[key]?.note;
+  return { status: "compatible", note: note ?? "Compatible (règle sans note associée)." };
+}
+
 export type NodeAcceptance = "compatible" | "unknown" | "incompatible";
 
 /**

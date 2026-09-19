@@ -39,6 +39,12 @@ export default function Inspector() {
         )}
       </div>
 
+      {classDef?.documentation && (
+        <p className="text-xs text-gray-600 whitespace-pre-line border-l-2 border-gray-200 pl-2">
+          {classDef.documentation}
+        </p>
+      )}
+
       {!classDef && (
         <div className="text-xs bg-red-50 text-red-700 rounded px-2 py-1">
           Type absent du catalogue chargé : édition des propriétés impossible.

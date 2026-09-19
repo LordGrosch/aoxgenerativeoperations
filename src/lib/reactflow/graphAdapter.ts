@@ -1,6 +1,7 @@
 import type { Edge, Node } from "reactflow";
 import type { WorkflowGraph, WorkflowNode } from "../model/types";
 import type { CatalogIndex } from "../catalog/catalogTypes";
+import { describeConnection } from "../compatibility/compatibilityEngine";
 
 /**
  * Convention de représentation visuelle : chaque WorkflowNode a un unique
@@ -33,12 +34,16 @@ export interface AoxNodeData {
    * documenté par le catalogue — on veut quand même pouvoir le voir/déconnecter). */
   portViews: AoxPortView[];
   isRoot: boolean;
+  /** Documentation du catalogue pour ce Type, si disponible. */
+  documentation?: string;
 }
 
 export interface AoxEdgeData {
   parentId: string;
   portName: string;
   childId: string;
+  note: string;
+  status: "compatible" | "unknown" | "incompatible";
 }
 
 export type NodeKind = "operation" | "input" | "output" | "other";
@@ -77,20 +82,22 @@ export function toReactFlowElements(
       id: node.id,
       type: "aoxNode",
       position: layout[node.id] ?? { x: 0, y: 0 },
-      data: { node, portViews, isRoot: node.id === graph.rootNodeId },
+      data: { node, portViews, isRoot: node.id === graph.rootNodeId, documentation: classDef?.documentation },
     });
 
     for (const port of Object.values(node.ports)) {
       port.connectedNodeIds.forEach((childId, index) => {
-        if (!graph.nodes[childId]) return; // défensif : référence orpheline
+        const child = graph.nodes[childId];
+        if (!child) return; // défensif : référence orpheline
+        const { status, note } = describeConnection(node.type, port.name, child.category);
         edges.push({
           id: `${childId}->${node.id}:${port.name}:${index}`,
           source: childId,
           sourceHandle: OUTPUT_HANDLE_ID,
           target: node.id,
           targetHandle: inputHandleId(port.name),
-          type: "smoothstep",
-          data: { parentId: node.id, portName: port.name, childId },
+          type: "aoxEdge",
+          data: { parentId: node.id, portName: port.name, childId, note, status },
         });
       });
     }

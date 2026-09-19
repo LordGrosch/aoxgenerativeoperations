@@ -15,8 +15,10 @@ import "reactflow/dist/style.css";
 import { useWorkflowStore } from "@/store/workflowStore";
 import { toReactFlowElements, portNameFromHandle, type AoxEdgeData } from "@/lib/reactflow/graphAdapter";
 import AoxNode from "./AoxNode";
+import AoxEdge from "./AoxEdge";
 
 const nodeTypes = { aoxNode: AoxNode };
+const edgeTypes = { aoxEdge: AoxEdge };
 export const AOX_DRAG_TYPE = "application/aox-class-type";
 
 function CanvasInner() {
@@ -115,6 +117,7 @@ function CanvasInner() {
         nodes={elements.nodes.map((n) => ({ ...n, selected: n.id === selectedNodeId }))}
         edges={elements.edges}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
