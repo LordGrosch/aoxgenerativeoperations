@@ -111,6 +111,7 @@ export function parseWorkflowXml(xml: string): WorkflowGraph {
           name,
           isList: true,
           connectedNodeIds: children.map((c) => parseObjectAOX(c)),
+          declaredDataType: dataType || "DynamicObjectAOX",
         };
       } else if (singleChildren !== undefined) {
         if (singleChildren.length > 1) {
@@ -123,6 +124,7 @@ export function parseWorkflowXml(xml: string): WorkflowGraph {
           name,
           isList: false,
           connectedNodeIds: [parseObjectAOX(singleChildren[0] as Record<string, unknown>)],
+          declaredDataType: dataType || "DynamicObjectAOX",
         };
       } else if (otherKeys.length === 0 && value !== undefined) {
         const scalarDataType: ScalarDataType = SCALAR_DATATYPES.has(dataType)
@@ -130,7 +132,10 @@ export function parseWorkflowXml(xml: string): WorkflowGraph {
           : "String";
         params[name] = { name, dataType: scalarDataType, value: coerceScalar(dataType, value) };
       } else {
-        rawConfigBlobs[name] = rebuildRawXml(name, p);
+        // On reconstruit le <Param> complet (pas seulement son contenu) afin
+        // que le générateur puisse le réinjecter tel quel sans avoir à
+        // deviner l'enveloppe Name/DataType d'origine.
+        rawConfigBlobs[name] = rebuildRawXml("Param", p);
       }
     }
 

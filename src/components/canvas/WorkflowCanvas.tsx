@@ -1,0 +1,134 @@
+"use client";
+
+import { useCallback, useRef } from "react";
+import ReactFlow, {
+  Background,
+  Controls,
+  MiniMap,
+  ReactFlowProvider,
+  useReactFlow,
+  type Connection,
+  type NodeChange,
+  type EdgeChange,
+} from "reactflow";
+import "reactflow/dist/style.css";
+import { useWorkflowStore } from "@/store/workflowStore";
+import { toReactFlowElements, portNameFromHandle, type AoxEdgeData } from "@/lib/reactflow/graphAdapter";
+import AoxNode from "./AoxNode";
+
+const nodeTypes = { aoxNode: AoxNode };
+export const AOX_DRAG_TYPE = "application/aox-class-type";
+
+function CanvasInner() {
+  const catalog = useWorkflowStore((s) => s.catalog);
+  const graph = useWorkflowStore((s) => s.graph);
+  const layout = useWorkflowStore((s) => s.layout);
+  const selectedNodeId = useWorkflowStore((s) => s.selectedNodeId);
+  const selectNode = useWorkflowStore((s) => s.selectNode);
+  const setNodePosition = useWorkflowStore((s) => s.setNodePosition);
+  const connect = useWorkflowStore((s) => s.connect);
+  const disconnect = useWorkflowStore((s) => s.disconnect);
+  const addNode = useWorkflowStore((s) => s.addNode);
+
+  const { screenToFlowPosition } = useReactFlow();
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const elements =
+    catalog && graph ? toReactFlowElements(graph, layout, catalog) : { nodes: [], edges: [] };
+
+  const onNodesChange = useCallback(
+    (changes: NodeChange[]) => {
+      for (const change of changes) {
+        if (change.type === "position" && change.position) {
+          setNodePosition(change.id, change.position);
+        }
+      }
+    },
+    [setNodePosition]
+  );
+
+  const onEdgesChange = useCallback(
+    (changes: EdgeChange[]) => {
+      for (const change of changes) {
+        if (change.type === "remove") {
+          const edge = elements.edges.find((e) => e.id === change.id);
+          const data = edge?.data as AoxEdgeData | undefined;
+          if (data) disconnect(data.parentId, data.portName, data.childId);
+        }
+      }
+    },
+    [elements.edges, disconnect]
+  );
+
+  const onConnect = useCallback(
+    (connection: Connection) => {
+      if (!connection.source || !connection.target || !connection.targetHandle) return;
+      const portName = portNameFromHandle(connection.targetHandle);
+      const result = connect(connection.target, portName, connection.source);
+      if (!result.ok) {
+        window.alert(`Connexion refusée : ${result.reason}`);
+      }
+    },
+    [connect]
+  );
+
+  const onDrop = useCallback(
+    (event: React.DragEvent) => {
+      event.preventDefault();
+      const type = event.dataTransfer.getData(AOX_DRAG_TYPE);
+      if (!type) return;
+      const position = screenToFlowPosition({ x: event.clientX, y: event.clientY });
+      try {
+        const id = addNode(type);
+        setNodePosition(id, position);
+      } catch (err) {
+        window.alert((err as Error).message);
+      }
+    },
+    [addNode, screenToFlowPosition, setNodePosition]
+  );
+
+  if (!catalog) {
+    return <div className="flex items-center justify-center h-full text-gray-400 text-sm">Chargement du catalogue…</div>;
+  }
+  if (!graph) {
+    return (
+      <div
+        ref={wrapperRef}
+        onDrop={onDrop}
+        onDragOver={(e) => e.preventDefault()}
+        className="flex items-center justify-center h-full text-gray-400 text-sm border-2 border-dashed m-4 rounded"
+      >
+        Glissez une classe depuis la palette pour créer la racine du workflow, ou chargez un XML existant.
+      </div>
+    );
+  }
+
+  return (
+    <div className="h-full w-full" ref={wrapperRef} onDrop={onDrop} onDragOver={(e) => e.preventDefault()}>
+      <ReactFlow
+        nodes={elements.nodes.map((n) => ({ ...n, selected: n.id === selectedNodeId }))}
+        edges={elements.edges}
+        nodeTypes={nodeTypes}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        onNodeClick={(_, node) => selectNode(node.id)}
+        onPaneClick={() => selectNode(null)}
+        fitView
+      >
+        <Background />
+        <Controls />
+        <MiniMap pannable zoomable />
+      </ReactFlow>
+    </div>
+  );
+}
+
+export default function WorkflowCanvas() {
+  return (
+    <ReactFlowProvider>
+      <CanvasInner />
+    </ReactFlowProvider>
+  );
+}

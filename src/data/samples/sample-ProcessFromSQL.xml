@@ -1,0 +1,49 @@
+<ObjectAOX Category="OperationAOX_OutputText" Type="OperationAOX_OutputText_OperationIterator">
+
+  <Param Name="InputStreamAOX_ItemDataList" DataType="DynamicObjectAOX">
+    <ObjectAOX Category="InputStreamAOX_ItemDataList" Type="InputStreamAOX_ItemDataList_Operation">
+      <Param Name="OperationAOX" DataType="DynamicObjectAOX">
+
+        <ObjectAOX Category="OperationAOX_OutputItemDataList" Type="OperationAOX_OutputItemDataList_Read_SQL">
+
+          <!--Input/Output de base-->
+
+          <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+            <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_Static">
+              <Param Name="sText" DataType="String" Value="
+             
+                    SELECT [User_Id]
+                          ,[User_FirstName] as 'UserFirstName'
+                          ,[User_LastName] as 'UserLastName'
+                          ,[User_Mail] as 'UserMail'
+      
+                      FROM [User]
+
+          
+
+	                    WHERE [User_IsDeleted] = 0
+
+		             " />
+
+            </ObjectAOX>
+          </Param>
+
+        </ObjectAOX>
+
+      </Param>
+    </ObjectAOX>
+  </Param>
+
+  <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+    <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_File">
+      <Param Name="FilePath" DataType="String" Value="%resource_folder%\Op_Template_SendMail.xmlt" />
+    </ObjectAOX>
+  </Param>
+
+  <Param Name="OutputStreamAOX_Text" DataType="DynamicObjectAOX">
+    <ObjectAOX Category="OutputStreamAOX_Text" Type="OutputStreamAOX_Text_File">
+      <Param Name="FilePath" DataType="String" Value="%resource_folder%\Result\ProcessFromSQL_Result_%timestamp%.txt" />
+    </ObjectAOX>
+  </Param>
+
+</ObjectAOX>
