@@ -25,6 +25,11 @@ export interface ValidationIssue {
   /** Chemin lisible depuis la racine, ex: "OperationAOX_OutputBinary_CreateZip.InputStreamAOX[0].ListInput[1]". */
   path: string;
   message: string;
+  /**
+   * Présent uniquement pour UNKNOWN_COMPATIBILITY_RULE : permet de générer
+   * un squelette de règle prêt à coller dans compatibility-rules.json.
+   */
+  meta?: { ownerType: string; portName: string; candidateCategory: string };
 }
 
 export interface ValidationResult {

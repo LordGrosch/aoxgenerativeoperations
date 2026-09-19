@@ -29,6 +29,7 @@ function CanvasInner() {
   const connect = useWorkflowStore((s) => s.connect);
   const disconnect = useWorkflowStore((s) => s.disconnect);
   const addNode = useWorkflowStore((s) => s.addNode);
+  const deleteNode = useWorkflowStore((s) => s.deleteNode);
 
   const { screenToFlowPosition } = useReactFlow();
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -41,10 +42,14 @@ function CanvasInner() {
       for (const change of changes) {
         if (change.type === "position" && change.position) {
           setNodePosition(change.id, change.position);
+        } else if (change.type === "remove") {
+          // La racine est protégée directement dans le store (deleteNode
+          // l'ignore silencieusement), pas besoin de filtrer ici.
+          deleteNode(change.id);
         }
       }
     },
-    [setNodePosition]
+    [setNodePosition, deleteNode]
   );
 
   const onEdgesChange = useCallback(
@@ -115,6 +120,7 @@ function CanvasInner() {
         onConnect={onConnect}
         onNodeClick={(_, node) => selectNode(node.id)}
         onPaneClick={() => selectNode(null)}
+        deleteKeyCode={["Backspace", "Delete"]}
         fitView
       >
         <Background />

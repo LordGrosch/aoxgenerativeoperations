@@ -1,6 +1,7 @@
 "use client";
 
 import { useWorkflowStore } from "@/store/workflowStore";
+import CompatibilitySnippetButton from "@/components/CompatibilitySnippetButton";
 
 export default function ValidationPanel() {
   const validation = useWorkflowStore((s) => s.validation);
@@ -18,15 +19,23 @@ export default function ValidationPanel() {
         {validation.errorCount} erreur(s), {validation.warningCount} avertissement(s)
       </div>
       {validation.issues.map((issue, i) => (
-        <button
+        <div
           key={i}
-          onClick={() => selectNode(issue.nodeId)}
-          className={`w-full text-left px-3 py-1 border-b hover:bg-gray-50 ${
+          className={`w-full flex items-center gap-1 px-3 py-1 border-b hover:bg-gray-50 ${
             issue.severity === "error" ? "text-red-700" : "text-amber-700"
           }`}
         >
-          {issue.severity === "error" ? "❌" : "⚠️"} {issue.path} — {issue.message}
-        </button>
+          <button onClick={() => selectNode(issue.nodeId)} className="text-left flex-1 truncate">
+            {issue.severity === "error" ? "❌" : "⚠️"} {issue.path} — {issue.message}
+          </button>
+          {issue.meta && (
+            <CompatibilitySnippetButton
+              ownerType={issue.meta.ownerType}
+              portName={issue.meta.portName}
+              candidateCategory={issue.meta.candidateCategory}
+            />
+          )}
+        </div>
       ))}
     </div>
   );

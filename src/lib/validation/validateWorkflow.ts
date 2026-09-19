@@ -161,6 +161,7 @@ export function validateWorkflow(graph: WorkflowGraph, catalog: CatalogIndex): V
             nodeId: childId,
             path: childPath,
             message: compat.reason,
+            meta: { ownerType: compat.ownerType, portName: compat.portName, candidateCategory: compat.candidateCategory },
           });
         }
 

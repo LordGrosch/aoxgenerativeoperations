@@ -1,5 +1,6 @@
 import type { CompatibilityRule } from "./compatibilityTypes";
 import { compatibilityTable } from "./compatibilityRules";
+import type { CatalogIndex } from "../catalog/catalogTypes";
 
 /**
  * Convention des classes "passerelle" : InputStreamAOX_<Famille>_Operation
@@ -16,7 +17,7 @@ export type CompatibilityResult =
   | { status: "compatible" }
   | { status: "incompatible"; reason: string }
   /** Aucune règle connue : on bloque par défaut, mais en le disant clairement. */
-  | { status: "unknown"; reason: string };
+  | { status: "unknown"; reason: string; ownerType: string; portName: string; candidateCategory: string };
 
 /**
  * Indique si un port doit être créé en mode "liste" lors d'une première
@@ -28,6 +29,39 @@ export function isPortListCapable(ownerType: string, portName: string): boolean 
   if (resolveGatewayRule(ownerType, portName)) return false;
   const key = `${ownerType}.${portName}` as const;
   return compatibilityTable[key]?.isList ?? false;
+}
+
+export type NodeAcceptance = "compatible" | "unknown" | "incompatible";
+
+/**
+ * Détermine si un nœud de Type `ownerType` peut accepter, sur AU MOINS UN
+ * de ses ports déclarés par le catalogue, un nœud de Category
+ * `candidateCategory`. Utilisé pour griser/colorer la palette selon le
+ * nœud actuellement sélectionné sur le canvas.
+ *
+ * - "compatible" : au moins un port accepte explicitement cette Category.
+ * - "unknown" : aucun port ne l'accepte explicitement, mais au moins un
+ *   port n'a pas de règle connue (impossible à trancher, donc on ne grise
+ *   pas — mieux vaut ne pas décourager une connexion qui n'a simplement
+ *   jamais été documentée).
+ * - "incompatible" : tous les ports déclarés ont une règle connue et aucune
+ *   n'accepte cette Category (ou le nœud n'a aucun port du tout).
+ */
+export function getNodeAcceptance(
+  ownerType: string,
+  candidateCategory: string,
+  catalog: CatalogIndex
+): NodeAcceptance {
+  const classDef = catalog.classesByType.get(ownerType);
+  if (!classDef || classDef.portProperties.length === 0) return "incompatible";
+
+  let sawUnknown = false;
+  for (const portDef of classDef.portProperties) {
+    const result = checkPortCompatibility(ownerType, portDef.name, candidateCategory);
+    if (result.status === "compatible") return "compatible";
+    if (result.status === "unknown") sawUnknown = true;
+  }
+  return sawUnknown ? "unknown" : "incompatible";
 }
 
 function ruleMatches(rule: CompatibilityRule, candidateCategory: string): boolean {
@@ -73,6 +107,9 @@ export function checkPortCompatibility(
       reason:
         `Aucune règle de compatibilité connue pour "${ownerType}.${portName}". ` +
         `Ajoutez un exemple réel utilisant ce port pour la définir.`,
+      ownerType,
+      portName,
+      candidateCategory,
     };
   }
 

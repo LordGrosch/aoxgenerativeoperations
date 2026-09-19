@@ -41,6 +41,19 @@ export interface AoxEdgeData {
   childId: string;
 }
 
+export type NodeKind = "operation" | "input" | "output" | "other";
+
+/**
+ * Classifie une Category en "nature" visuelle (Operation / Input / Output /
+ * autre). Purement indicatif pour l'UI, sans lien avec la compatibilité.
+ */
+export function getNodeKind(category: string): NodeKind {
+  if (category.startsWith("OperationAOX")) return "operation";
+  if (category.startsWith("InputStreamAOX") || category === "InputAOX") return "input";
+  if (category.startsWith("OutputStreamAOX")) return "output";
+  return "other";
+}
+
 export function toReactFlowElements(
   graph: WorkflowGraph,
   layout: Record<string, { x: number; y: number }>,

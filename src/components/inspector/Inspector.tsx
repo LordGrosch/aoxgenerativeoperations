@@ -1,7 +1,7 @@
 "use client";
 
 import { useWorkflowStore } from "@/store/workflowStore";
-
+import CompatibilitySnippetButton from "@/components/CompatibilitySnippetButton";
 
 export default function Inspector() {
   const catalog = useWorkflowStore((s) => s.catalog);
@@ -50,11 +50,18 @@ export default function Inspector() {
           {issues.map((issue, i) => (
             <div
               key={i}
-              className={`text-xs rounded px-2 py-1 ${
+              className={`text-xs rounded px-2 py-1 flex items-center gap-1 ${
                 issue.severity === "error" ? "bg-red-50 text-red-700" : "bg-amber-50 text-amber-700"
               }`}
             >
-              {issue.message}
+              <span className="flex-1">{issue.message}</span>
+              {issue.meta && (
+                <CompatibilitySnippetButton
+                  ownerType={issue.meta.ownerType}
+                  portName={issue.meta.portName}
+                  candidateCategory={issue.meta.candidateCategory}
+                />
+              )}
             </div>
           ))}
         </div>
