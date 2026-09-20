@@ -2,6 +2,8 @@
 
 import { useWorkflowStore } from "@/store/workflowStore";
 import CompatibilitySnippetButton from "@/components/CompatibilitySnippetButton";
+import DictionaryEditor from "@/components/inspector/DictionaryEditor";
+import { parseDictionaryBlob } from "@/lib/rawconfig/keyValueEditor";
 
 export default function Inspector() {
   const catalog = useWorkflowStore((s) => s.catalog);
@@ -10,6 +12,8 @@ export default function Inspector() {
   const validation = useWorkflowStore((s) => s.validation);
   const updateParam = useWorkflowStore((s) => s.updateParam);
   const deleteNode = useWorkflowStore((s) => s.deleteNode);
+  const saveSnippetFromNode = useWorkflowStore((s) => s.saveSnippetFromNode);
+  const updateRawConfigBlob = useWorkflowStore((s) => s.updateRawConfigBlob);
 
   if (!catalog || !graph || !selectedNodeId) {
     return <div className="p-3 text-sm text-gray-400">Sélectionnez un nœud pour voir ses propriétés.</div>;
@@ -38,6 +42,17 @@ export default function Inspector() {
           </button>
         )}
       </div>
+
+      <button
+        onClick={() => {
+          const name = window.prompt("Nom du snippet :", node.type);
+          if (name) saveSnippetFromNode(node.id, name);
+        }}
+        className="text-xs text-purple-700 border border-purple-200 rounded px-2 py-1 hover:bg-purple-50 w-full"
+        title="Enregistre ce nœud et tout son sous-arbre comme snippet réutilisable, disponible ensuite dans la palette."
+      >
+        💾 Enregistrer comme snippet
+      </button>
 
       {classDef?.documentation && (
         <p className="text-xs text-gray-600 whitespace-pre-line border-l-2 border-gray-200 pl-2">
@@ -113,20 +128,43 @@ export default function Inspector() {
       )}
 
       {node.rawConfigBlobs && (
-        <div className="space-y-2">
-          <div className="text-xs text-gray-500 font-medium">
-            Contenu préservé tel quel (non éditable dans cette version)
-          </div>
-          {Object.entries(node.rawConfigBlobs).map(([key, xml]) => (
-            <div key={key}>
-              <div className="text-xs text-gray-500">{key}</div>
-              <textarea
-                readOnly
-                value={xml}
-                className="w-full text-[10px] font-mono border rounded p-1 h-24 bg-gray-50"
-              />
-            </div>
-          ))}
+        <div className="space-y-3">
+          <div className="text-xs text-gray-500 font-medium">Contenu additionnel</div>
+          {Object.entries(node.rawConfigBlobs).map(([key, xml]) => {
+            const isDictionary = node.type === "KeyValueListAOX" && key === "Dictionary";
+            const model = isDictionary ? parseDictionaryBlob(xml) : null;
+
+            if (model && model.kind !== "unsupported") {
+              return (
+                <div key={key}>
+                  <div className="text-xs text-gray-500 mb-1">{key} — édition assistée</div>
+                  <DictionaryEditor
+                    key={`${node.id}-${key}`}
+                    model={model}
+                    onSave={(rawXml) => updateRawConfigBlob(node.id, key, rawXml)}
+                  />
+                </div>
+              );
+            }
+
+            return (
+              <div key={key}>
+                <div className="text-xs text-gray-500">
+                  {key}
+                  {model?.kind === "unsupported" ? (
+                    <span className="text-amber-600"> — {model.reason}</span>
+                  ) : (
+                    " (non éditable dans cette version)"
+                  )}
+                </div>
+                <textarea
+                  readOnly
+                  value={xml}
+                  className="w-full text-[10px] font-mono border rounded p-1 h-24 bg-gray-50"
+                />
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

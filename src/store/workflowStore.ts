@@ -9,7 +9,30 @@ import type { ValidationResult } from "../lib/validation/validationTypes";
 import { computeAutoLayout } from "../lib/layout/autoLayout";
 import { pruneUnreachableNodes } from "../lib/model/types";
 import type { ParamValue, WorkflowGraph, WorkflowNode } from "../lib/model/types";
-import { checkPortCompatibility, isPortListCapable } from "../lib/compatibility/compatibilityEngine";
+import { extractSubgraph, instantiateSubgraph, type WorkflowSnippet } from "../lib/model/snippet";
+import { checkPortCompatibility, isPortListCapable } from "@/lib/compatibility/compatibilityEngine";
+
+const SNIPPETS_STORAGE_KEY = "aox-snippets";
+
+function loadSnippetsFromLocalStorage(): WorkflowSnippet[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(SNIPPETS_STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as WorkflowSnippet[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function persistSnippets(snippets: WorkflowSnippet[]): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(SNIPPETS_STORAGE_KEY, JSON.stringify(snippets));
+  } catch {
+    // Quota dépassé ou storage indisponible : non bloquant, les snippets
+    // restent utilisables pour la session en cours.
+  }
+}
 
 type Position = { x: number; y: number };
 type ConnectResult = { ok: true } | { ok: false; reason: string };
@@ -20,6 +43,9 @@ interface WorkflowState {
   layout: Record<string, Position>;
   selectedNodeId: string | null;
   validation: ValidationResult | null;
+  /** XML tel que chargé initialement (avant toute édition), pour la vue diff. null si le workflow a été créé de zéro dans l'éditeur. */
+  loadedXml: string | null;
+  snippets: WorkflowSnippet[];
 
   loadCatalog: (xml: string) => void;
   loadWorkflow: (xml: string) => void;
@@ -32,8 +58,15 @@ interface WorkflowState {
   addNode: (type: string) => string;
   deleteNode: (id: string) => void;
   updateParam: (nodeId: string, paramName: string, value: string | number | boolean) => void;
+  updateRawConfigBlob: (nodeId: string, blobKey: string, newRawXml: string) => void;
   connect: (parentId: string, portName: string, childId: string) => ConnectResult;
   disconnect: (parentId: string, portName: string, childId: string) => void;
+
+  loadSnippetsFromStorage: () => void;
+  saveSnippetFromNode: (nodeId: string, name: string) => void;
+  deleteSnippet: (id: string) => void;
+  /** Instancie un snippet dans le graphe courant (ou en tant que racine si aucun graphe n'existe). Renvoie l'id du nœud racine inséré. */
+  instantiateSnippet: (snippetId: string, dropPosition?: Position) => string;
 
   runValidation: () => void;
 }
@@ -70,13 +103,15 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
   layout: {},
   selectedNodeId: null,
   validation: null,
+  loadedXml: null,
+  snippets: [],
 
   loadCatalog: (xml) => set({ catalog: parseCatalog(xml) }),
 
   loadWorkflow: (xml) => {
     const graph = parseWorkflowXml(xml);
     const layout = computeAutoLayout(graph);
-    set({ graph, layout, selectedNodeId: null });
+    set({ graph, layout, selectedNodeId: null, loadedXml: xml });
     get().runValidation();
   },
 
@@ -143,6 +178,16 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     get().runValidation();
   },
 
+  updateRawConfigBlob: (nodeId, blobKey, newRawXml) => {
+    const { graph } = get();
+    if (!graph) return;
+    const node = graph.nodes[nodeId];
+    if (!node || !node.rawConfigBlobs || !(blobKey in node.rawConfigBlobs)) return;
+    node.rawConfigBlobs[blobKey] = newRawXml;
+    set({ graph: { ...graph } });
+    get().runValidation();
+  },
+
   connect: (parentId, portName, childId) => {
     const { graph } = get();
     if (!graph) return { ok: false, reason: "Aucun workflow ouvert." };
@@ -201,5 +246,63 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     const { graph, catalog } = get();
     if (!graph || !catalog) return set({ validation: null });
     set({ validation: validateWorkflow(graph, catalog) });
+  },
+
+  loadSnippetsFromStorage: () => set({ snippets: loadSnippetsFromLocalStorage() }),
+
+  saveSnippetFromNode: (nodeId, name) => {
+    const { graph, snippets } = get();
+    if (!graph) return;
+    const node = graph.nodes[nodeId];
+    if (!node) return;
+
+    const { rootNodeId, nodes } = extractSubgraph(graph, nodeId);
+    const snippet: WorkflowSnippet = {
+      id: uuidv4(),
+      name,
+      rootType: node.type,
+      createdAt: new Date().toISOString(),
+      rootNodeId,
+      nodes,
+    };
+    const next = [...snippets, snippet];
+    set({ snippets: next });
+    persistSnippets(next);
+  },
+
+  deleteSnippet: (id) => {
+    const next = get().snippets.filter((s) => s.id !== id);
+    set({ snippets: next });
+    persistSnippets(next);
+  },
+
+  instantiateSnippet: (snippetId, dropPosition) => {
+    const { snippets, graph, layout } = get();
+    const snippet = snippets.find((s) => s.id === snippetId);
+    if (!snippet) throw new Error("Snippet introuvable.");
+
+    const { rootNodeId, nodes } = instantiateSubgraph(snippet);
+
+    // Layout local au snippet (indépendant du reste du graphe), puis
+    // translaté pour que sa racine atterrisse exactement au point de dépose.
+    const miniGraph: WorkflowGraph = { rootNodeId, nodes };
+    const miniLayout = computeAutoLayout(miniGraph);
+    const rootPos = miniLayout[rootNodeId] ?? { x: 0, y: 0 };
+    const target = dropPosition ?? { x: 0, y: 0 };
+    const dx = target.x - rootPos.x;
+    const dy = target.y - rootPos.y;
+    const placedLayout: Record<string, Position> = {};
+    for (const [id, pos] of Object.entries(miniLayout)) {
+      placedLayout[id] = { x: pos.x + dx, y: pos.y + dy };
+    }
+
+    if (!graph) {
+      set({ graph: miniGraph, layout: placedLayout, selectedNodeId: rootNodeId });
+    } else {
+      Object.assign(graph.nodes, nodes);
+      set({ graph: { ...graph }, layout: { ...layout, ...placedLayout }, selectedNodeId: rootNodeId });
+    }
+    get().runValidation();
+    return rootNodeId;
   },
 }));

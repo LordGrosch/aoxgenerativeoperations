@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useWorkflowStore } from "@/store/workflowStore";
 import { AOX_DRAG_TYPE } from "@/components/canvas/WorkflowCanvas";
 import { getNodeAcceptance } from "@/lib/compatibility/compatibilityEngine";
+import SnippetPalette from "./SnippetPalette";
 
 export default function Palette() {
   const catalog = useWorkflowStore((s) => s.catalog);
@@ -51,6 +52,7 @@ export default function Palette() {
         )}
       </div>
       <div className="flex-1 overflow-y-auto text-sm">
+        <SnippetPalette />
         {grouped.map((g) => (
           <div key={g.category} className="border-b">
             <div className="px-2 py-1 bg-gray-50 text-gray-500 font-medium text-[11px] sticky top-0">

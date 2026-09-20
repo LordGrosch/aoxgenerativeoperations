@@ -20,6 +20,7 @@ import AoxEdge from "./AoxEdge";
 const nodeTypes = { aoxNode: AoxNode };
 const edgeTypes = { aoxEdge: AoxEdge };
 export const AOX_DRAG_TYPE = "application/aox-class-type";
+export const AOX_SNIPPET_DRAG_TYPE = "application/aox-snippet-id";
 
 function CanvasInner() {
   const catalog = useWorkflowStore((s) => s.catalog);
@@ -32,6 +33,7 @@ function CanvasInner() {
   const disconnect = useWorkflowStore((s) => s.disconnect);
   const addNode = useWorkflowStore((s) => s.addNode);
   const deleteNode = useWorkflowStore((s) => s.deleteNode);
+  const instantiateSnippet = useWorkflowStore((s) => s.instantiateSnippet);
 
   const { screenToFlowPosition } = useReactFlow();
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -82,17 +84,22 @@ function CanvasInner() {
   const onDrop = useCallback(
     (event: React.DragEvent) => {
       event.preventDefault();
-      const type = event.dataTransfer.getData(AOX_DRAG_TYPE);
-      if (!type) return;
+      const snippetId = event.dataTransfer.getData(AOX_SNIPPET_DRAG_TYPE);
+      const classType = event.dataTransfer.getData(AOX_DRAG_TYPE);
+      if (!snippetId && !classType) return;
       const position = screenToFlowPosition({ x: event.clientX, y: event.clientY });
       try {
-        const id = addNode(type);
-        setNodePosition(id, position);
+        if (snippetId) {
+          instantiateSnippet(snippetId, position);
+        } else {
+          const id = addNode(classType);
+          setNodePosition(id, position);
+        }
       } catch (err) {
         window.alert((err as Error).message);
       }
     },
-    [addNode, screenToFlowPosition, setNodePosition]
+    [addNode, instantiateSnippet, screenToFlowPosition, setNodePosition]
   );
 
   if (!catalog) {

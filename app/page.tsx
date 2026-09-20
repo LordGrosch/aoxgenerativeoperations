@@ -11,6 +11,11 @@ import { useWorkflowStore } from "@/store/workflowStore";
 
 export default function Home() {
   const loadCatalog = useWorkflowStore((s) => s.loadCatalog);
+  const loadSnippetsFromStorage = useWorkflowStore((s) => s.loadSnippetsFromStorage);
+
+  useEffect(() => {
+    loadSnippetsFromStorage();
+  }, [loadSnippetsFromStorage]);
 
   useEffect(() => {
     // Le catalogue doit être placé dans /public/catalog.xml pour être servi
