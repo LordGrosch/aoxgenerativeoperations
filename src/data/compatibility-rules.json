@@ -89,6 +89,17 @@
     "note": "Cas notable : bien que de famille Image, ce port attend une entrée TEXTE (la source HTML à rasteriser). InputStreamAOX_Text_Operation (vers HTMLT_To_HTML) observé en entrée."
   },
 
+  "OperationAOX_OutputImage_OperationIterator.InputStreamAOX": {
+    "rule": { "kind": "category", "category": "InputStreamAOX_Text" },
+    "observed": true,
+    "note": "Exemple Client_ProcessFromXML.xml : InputStreamAOX_Text_File pointant vers un template .xmlt décrivant l'opération à exécuter par item (mécanisme analogue à OperationAOX_OutputText_ScriptXML, contenu opaque hors du graphe, comme un .htmlt)."
+  },
+  "OperationAOX_OutputImage_OperationIterator.OutputStreamAOX_Result": {
+    "rule": { "kind": "category", "category": "OutputStreamAOX_Text" },
+    "observed": true,
+    "note": "Exemple Client_ProcessFromXML.xml : OutputStreamAOX_Text_File branché en sortie (log de résultat)."
+  },
+
   "OperationAOX_OutputBinary_CreateZip.InputStreamAOX": {
     "rule": { "kind": "category", "category": "InputStreamAOX_None" },
     "observed": true,

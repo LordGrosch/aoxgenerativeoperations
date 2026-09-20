@@ -1,0 +1,139 @@
+<ObjectAOX Category="OperationAOX_OutputText" Type="OperationAOX_OutputText_SendMail">
+
+  <!--=====================================================================
+       Paramètres du mail — à adapter.
+  ======================================================================-->
+
+  <Param Name="SendMail_To" DataType="String" Value="destinataire@monentreprise.com" />
+  <Param Name="SendMail_To_Label" DataType="String" Value="Destinataire" />
+  <Param Name="SendMail_From" DataType="String" Value="reporting@monentreprise.com" />
+  <Param Name="SendMail_From_Label" DataType="String" Value="AOXOperationManager" />
+  <Param Name="SendMail_Object" DataType="String" Value="Vos images" />
+
+  <!--=====================================================================
+       Corps du mail : un template HTMLT traduit en HTML avec des paramètres.
+  ======================================================================-->
+
+  <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+    <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_Operation">
+      <Param Name="OperationAOX" DataType="DynamicObjectAOX">
+        <ObjectAOX Category="OperationAOX_OutputText" Type="OperationAOX_OutputText_HTMLT_To_HTML">
+
+          <!-- Paramètres injectés dans le template (remplacent les tags du .htmlt) -->
+          <Param Name="HTMLT_Parameters" DataType="ObjectAOX">
+            <ObjectAOX Category="ObjectAOX" Type="KeyValueListAOX">
+              <Param Name="Dictionary" DataType="None">
+                <KeyValueListAOX>
+                  <Param Name="JSONKeyValueList" DataType="None" Value='[
+                    { "name": "UserName", "value": "Client" },
+                    { "name": "NbImages", "value": "3" }
+                  ]' />
+                </KeyValueListAOX>
+              </Param>
+            </ObjectAOX>
+          </Param>
+
+          <!-- Le template .htmlt source -->
+          <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+            <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_File">
+              <Param Name="FilePath" DataType="String" Value="%resource_folder%\Mail_Template_Images.htmlt" />
+            </ObjectAOX>
+          </Param>
+
+        </ObjectAOX>
+      </Param>
+    </ObjectAOX>
+  </Param>
+
+  <!--=====================================================================
+       Pièce jointe : un Zip contenant les images redimensionnées.
+  ======================================================================-->
+
+  <Param Name="SendMail_JoinedFile" DataType="DynamicObjectAOX">
+    <ListObjectAOX>
+
+      <ObjectAOX Category="InputStreamAOX_Binary" Type="InputStreamAOX_Binary_Operation">
+        <Param Name="OperationAOX" DataType="DynamicObjectAOX">
+          <ObjectAOX Category="OperationAOX_OutputBinary" Type="OperationAOX_OutputBinary_CreateZip">
+
+            <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+              <ObjectAOX Category="InputStreamAOX_None" Type="InputStreamAOX_None_ListInput">
+                <Param Name="ListInput" DataType="DynamicObjectAOX">
+                  <ListObjectAOX>
+
+                    <!-- Image 1 : récupérée depuis la base AOX (Media_ApplicationCode), redimensionnée. -->
+                    <ObjectAOX Category="InputStreamAOX_Image" Type="InputStreamAOX_Image_Operation">
+                      <Param Name="OperationAOX" DataType="DynamicObjectAOX">
+                        <ObjectAOX Category="OperationAOX_OutputImage" Type="OperationAOX_OutputImage_Resize">
+                          <Param Name="nWidthPixel" DataType="Integer" Value="800" />
+                          <Param Name="nHeightPixel" DataType="Integer" Value="800" />
+                          <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+                            <ObjectAOX Category="InputStreamAOX_Image" Type="InputStreamAOX_Image_DBMedia_FromCode">
+                              <Param Name="sMediaAppCode" DataType="String" Value="PRODUCT_IMG_1" />
+                            </ObjectAOX>
+                          </Param>
+                        </ObjectAOX>
+                      </Param>
+                    </ObjectAOX>
+
+                    <!-- Image 2 -->
+                    <ObjectAOX Category="InputStreamAOX_Image" Type="InputStreamAOX_Image_Operation">
+                      <Param Name="OperationAOX" DataType="DynamicObjectAOX">
+                        <ObjectAOX Category="OperationAOX_OutputImage" Type="OperationAOX_OutputImage_Resize">
+                          <Param Name="nWidthPixel" DataType="Integer" Value="800" />
+                          <Param Name="nHeightPixel" DataType="Integer" Value="800" />
+                          <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+                            <ObjectAOX Category="InputStreamAOX_Image" Type="InputStreamAOX_Image_DBMedia_FromCode">
+                              <Param Name="sMediaAppCode" DataType="String" Value="PRODUCT_IMG_2" />
+                            </ObjectAOX>
+                          </Param>
+                        </ObjectAOX>
+                      </Param>
+                    </ObjectAOX>
+
+                    <!-- Image 3 -->
+                    <ObjectAOX Category="InputStreamAOX_Image" Type="InputStreamAOX_Image_Operation">
+                      <Param Name="OperationAOX" DataType="DynamicObjectAOX">
+                        <ObjectAOX Category="OperationAOX_OutputImage" Type="OperationAOX_OutputImage_Resize">
+                          <Param Name="nWidthPixel" DataType="Integer" Value="800" />
+                          <Param Name="nHeightPixel" DataType="Integer" Value="800" />
+                          <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+                            <ObjectAOX Category="InputStreamAOX_Image" Type="InputStreamAOX_Image_DBMedia_FromCode">
+                              <Param Name="sMediaAppCode" DataType="String" Value="PRODUCT_IMG_3" />
+                            </ObjectAOX>
+                          </Param>
+                        </ObjectAOX>
+                      </Param>
+                    </ObjectAOX>
+
+                    <!-- ... répéter un bloc "Image N" par image à inclure ... -->
+
+                  </ListObjectAOX>
+                </Param>
+              </ObjectAOX>
+            </Param>
+
+            <Param Name="OutputStreamAOX_Binary" DataType="DynamicObjectAOX">
+              <ObjectAOX Category="OutputStreamAOX_Binary" Type="OutputStreamAOX_Binary_Memory">
+                <Param Name="OutputLabel" DataType="String" Value="Images.zip" />
+              </ObjectAOX>
+            </Param>
+
+          </ObjectAOX>
+        </Param>
+      </ObjectAOX>
+
+    </ListObjectAOX>
+  </Param>
+
+  <!--=====================================================================
+       Log d'exécution du SendMail.
+  ======================================================================-->
+
+  <Param Name="OutputStreamAOX_Text" DataType="DynamicObjectAOX">
+    <ObjectAOX Category="OutputStreamAOX_Text" Type="OutputStreamAOX_Text_File">
+      <Param Name="FilePath" DataType="String" Value="%resource_folder%\Result\SendMail_Result_%timestamp%.txt" />
+    </ObjectAOX>
+  </Param>
+
+</ObjectAOX>

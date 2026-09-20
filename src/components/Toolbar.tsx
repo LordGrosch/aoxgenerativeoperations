@@ -7,6 +7,10 @@ export default function Toolbar() {
   const graph = useWorkflowStore((s) => s.graph);
   const loadWorkflow = useWorkflowStore((s) => s.loadWorkflow);
   const exportXml = useWorkflowStore((s) => s.exportXml);
+  const undo = useWorkflowStore((s) => s.undo);
+  const redo = useWorkflowStore((s) => s.redo);
+  const canUndo = useWorkflowStore((s) => s.past.length > 0 || s.pendingParamEdit !== null);
+  const canRedo = useWorkflowStore((s) => s.future.length > 0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,6 +40,23 @@ export default function Toolbar() {
   return (
     <div className="flex items-center gap-2 px-3 py-2 border-b bg-white">
       <span className="font-semibold text-sm mr-4">AOX Generative Operations</span>
+      <button
+        className="text-sm border rounded px-2 py-1 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+        onClick={undo}
+        disabled={!canUndo}
+        title="Annuler (Ctrl+Z)"
+      >
+        ↶ Annuler
+      </button>
+      <button
+        className="text-sm border rounded px-2 py-1 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+        onClick={redo}
+        disabled={!canRedo}
+        title="Rétablir (Ctrl+Maj+Z)"
+      >
+        ↷ Rétablir
+      </button>
+      <span className="w-px h-5 bg-gray-200 mx-1" />
       <button className="text-sm border rounded px-2 py-1 hover:bg-gray-50" onClick={() => fileInputRef.current?.click()}>
         Charger un XML
       </button>

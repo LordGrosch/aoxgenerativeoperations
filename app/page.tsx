@@ -18,6 +18,24 @@ export default function Home() {
   }, [loadSnippetsFromStorage]);
 
   useEffect(() => {
+    // Raccourcis Ctrl/Cmd+Z (annuler) et Ctrl/Cmd+Maj+Z (rétablir). On laisse
+    // le champ gérer son propre undo natif si le focus est dans un
+    // input/textarea, pour ne pas créer une double sémantique d'annulation.
+    function handleKeyDown(e: KeyboardEvent) {
+      const isMod = e.ctrlKey || e.metaKey;
+      if (!isMod || e.key.toLowerCase() !== "z") return;
+      const active = document.activeElement;
+      if (active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement) return;
+      e.preventDefault();
+      const { undo, redo } = useWorkflowStore.getState();
+      if (e.shiftKey) redo();
+      else undo();
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  useEffect(() => {
     // Le catalogue doit être placé dans /public/catalog.xml pour être servi
     // statiquement par Next.js à cette URL.
     fetch("/catalog.xml")

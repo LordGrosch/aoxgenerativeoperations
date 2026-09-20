@@ -1,0 +1,62 @@
+<ObjectAOX Category="OperationAOX_OutputImage" Type="OperationAOX_OutputImage_SaveImage">
+
+  <!--Paramètres-->
+
+  <!--Input/Output de base-->
+
+  <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+    <ObjectAOX Category="InputStreamAOX_Image" Type="InputStreamAOX_Image_Operation">
+      <Param Name="OperationAOX" DataType="DynamicObjectAOX">
+
+        <ObjectAOX Category="OperationAOX_OutputImage" Type="OperationAOX_OutputImage_ConvertToFormattedImage">
+
+          <!--Paramètres-->
+
+          <Param Name="ImageAOXFormat" DataType="DynamicObjectAOX">
+            <ObjectAOX Category="ImageAOXFormat" Type="ImageAOXFormat_JPEG">
+              <Param Name="JpegQuality" DataType="Integer" Value="90" />
+            </ObjectAOX>
+          </Param>
+
+          <!--Input/Output de base-->
+
+          <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+            <ObjectAOX Category="InputStreamAOX_Image" Type="InputStreamAOX_Image_Operation">
+              <Param Name="OperationAOX" DataType="DynamicObjectAOX">
+
+                <ObjectAOX Category="OperationAOX_OutputImage" Type="OperationAOX_OutputImage_URL_To_Image">
+
+                  <!--Paramètres-->
+
+                  <!--Input/Output de base-->
+
+                  <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+                    <ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_Static">
+                      <Param Name="sText" DataType="String" Value="https://monsite.com/mapage" />
+                    </ObjectAOX>
+                  </Param>
+
+                </ObjectAOX>
+                
+              </Param>
+            </ObjectAOX>
+          </Param>
+
+        </ObjectAOX>
+
+      </Param>
+    </ObjectAOX>
+  </Param>
+
+  <Param Name="OutputStreamAOX_Image" DataType="DynamicObjectAOX">
+    <ObjectAOX Category="OutputStreamAOX_Image" Type="OutputStreamAOX_Image_File">
+      <Param Name="FilePath" DataType="String" Value="%resource_folder%\Result\URL_Result_%timestamp%.%image_extension%" />
+    </ObjectAOX>
+  </Param>
+
+</ObjectAOX>
+
+
+
+
+
