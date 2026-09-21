@@ -1,0 +1,50 @@
+<ObjectAOX Category="OperationAOX_OutputText" Type="OperationAOX_OutputText_OperationIterator">
+
+	<!--Requête liste paniers-->
+
+	<DeclareLocal Name="SQL_CartList" DataType="String"></DeclareLocal>
+
+	<SetLocal Name="SQL_CartList" Value="">
+		<AttributeTranslation attribut="Value">
+
+			DECLARE @nSiteId AS INT;
+			SET @nSiteId = 1;
+
+			select top 2 * from Cart
+			INNER JOIN CartStatus ON Cart_CartStatus_Id = CartStatus_Id
+			AND CartStatus_AppCode = 'CARTSTATUS_VALIDATED'
+			order by 1 desc
+
+		</AttributeTranslation>
+	</SetLocal>
+
+	<Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+		<ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_File">
+			<Param Name="FilePath" DataType="String" Value="%resource_folder%\Client\SendMail.xmlt" />
+		</ObjectAOX>
+	</Param>
+	
+	<Param Name="InputStreamAOX_ItemDataList" DataType="DynamicObjectAOX">
+		<ObjectAOX Category="InputStreamAOX_ItemDataList" Type="InputStreamAOX_ItemDataList_Operation">
+			<Param Name="OperationAOX" DataType="DynamicObjectAOX">
+
+				<ObjectAOX Category="OperationAOX_OutputItemDataList" Type="OperationAOX_OutputItemDataList_Read_SQL">
+
+					<Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+						<ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_Static">
+							<Param Name="sText" DataType="String" Value="">
+								<AttributeTranslation attribut='Value'>
+									<GetLocal Name='SQL_CartList'></GetLocal>
+								</AttributeTranslation>
+							</Param>
+						</ObjectAOX>
+					</Param>
+
+				</ObjectAOX>
+
+			</Param>
+		</ObjectAOX>
+	</Param>
+
+
+</ObjectAOX>

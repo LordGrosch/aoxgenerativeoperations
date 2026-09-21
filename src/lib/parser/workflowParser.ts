@@ -33,7 +33,16 @@ const rawBuilder = new XMLBuilder({ ignoreAttributes: false, attributeNamePrefix
  * round-trip strictement bit-à-bit devient nécessaire sur ces blocs.
  */
 function rebuildRawXml(tagName: string, node: unknown): string {
-  return rawBuilder.build({ [tagName]: node }).trim();
+  const xml = rawBuilder.build({ [tagName]: node });
+  // Nettoyage cosmétique : XMLBuilder laisse des lignes vides/blanches lors
+  // de la reconstruction, sans impact structurel (déjà validé par le test
+  // de round-trip), mais nuisant à la lisibilité une fois réinjecté dans le
+  // XML généré.
+  return xml
+    .split("\n")
+    .map((line) => line.trimEnd())
+    .filter((line) => line.trim().length > 0)
+    .join("\n");
 }
 
 /**
@@ -54,7 +63,21 @@ function rebuildRawXml(tagName: string, node: unknown): string {
  * sans avoir à connaître ces noms de classe à l'avance.
  */
 export function parseWorkflowXml(xml: string): WorkflowGraph {
-  const validation = XMLValidator.validate(xml);
+  // Certains fichiers réels (notamment les .xmlt utilisés comme "template"
+  // par un OperationIterator) ont plusieurs nœuds au niveau racine du
+  // fichier (commentaires, futures balises non modélisées...), ce qui n'est
+  // pas du XML valide au sens strict (un document ne doit avoir qu'un seul
+  // élément racine). On encapsule tout le contenu dans une balise
+  // synthétique avant validation/parsing : ça rend n'importe quel fichier
+  // de ce type syntaxiquement valide, quel que soit le nombre ou la nature
+  // de ses nœuds de tête, sans avoir à connaître ni énumérer ces nœuds à
+  // l'avance. On cherche ensuite l'unique <ObjectAOX> à l'intérieur ; tout
+  // le reste au même niveau (commentaires, balises inconnues) est
+  // simplement ignoré, comme pour n'importe quel enfant non-<Param> d'un
+  // <ObjectAOX> (déjà le cas plus bas dans parseObjectAOX).
+  const wrapped = `<_root>${xml}</_root>`;
+
+  const validation = XMLValidator.validate(wrapped);
   if (validation !== true) {
     const { msg, line, col } = validation.err;
     throw new Error(`XML de workflow invalide (ligne ${line}, colonne ${col}) : ${msg}`);
@@ -68,15 +91,17 @@ export function parseWorkflowXml(xml: string): WorkflowGraph {
     isArray: (name) => name === "Param" || name === "ObjectAOX",
   });
 
-  const doc = parser.parse(xml);
-  const rootCandidates = asArray(doc.ObjectAOX);
+  const doc = parser.parse(wrapped);
+  const rootWrapper = doc._root as Record<string, unknown>;
+  const rootCandidates = asArray(rootWrapper.ObjectAOX as unknown) as Record<string, unknown>[];
   if (rootCandidates.length === 0) {
-    throw new Error('XML de workflow invalide : élément racine "<ObjectAOX>" introuvable.');
+    throw new Error('XML de workflow invalide : aucun élément "<ObjectAOX>" trouvé dans le fichier.');
   }
   if (rootCandidates.length > 1) {
     throw new Error(
-      `XML de workflow invalide : ${rootCandidates.length} éléments racine <ObjectAOX> trouvés. ` +
-        `Un fichier de workflow AOX ne doit avoir qu'une seule racine.`
+      `XML de workflow invalide : ${rootCandidates.length} éléments <ObjectAOX> trouvés au niveau racine. ` +
+        `Un fichier de workflow AOX ne doit en contenir qu'un seul (les autres nœuds de tête — commentaires, ` +
+        `balises non modélisées — sont ignorés, mais un seul <ObjectAOX> est attendu).`
     );
   }
 

@@ -1,0 +1,171 @@
+<ObjectAOX Category="OperationAOX_OutputText" Type="OperationAOX_OutputText_SendMail">
+
+	<!--Requête contenu panier-->
+
+	<DeclareLocal Name="SQL_CartContent" DataType="String"></DeclareLocal>
+
+	<SetLocal Name="SQL_CartContent" Value="">
+		<AttributeTranslation attribut="Value">
+
+			DECLARE @nSiteId AS INT;
+			SET @nSiteId = 1;
+
+			DECLARE @Cart_Id AS INT;
+			SET @Cart_Id = <GetGlobal Name='Cart_Id'></GetGlobal>;
+
+			SELECT *, ProductProductFieldValue_ExternalValue as 'Media_Id'
+
+			FROM [dbo].[CartLinkTo]
+
+			INNER JOIN [Cart] ON [Cart_Id] = [CartLinkTo_Cart_Id]
+			AND [Cart_Id] = @Cart_Id
+
+			INNER JOIN [CartStatus] ON [CartStatus_Id] = [Cart_CartStatus_Id]
+			INNER JOIN [FrontOfficeUser] ON [FrontOfficeUser_Id] = [Cart_FrontOfficeUser_Id]
+			INNER JOIN [ExternalType] ON [ExternalType_Id] = [CartLinkTo_ExternalType_Id]
+			AND [ExternalType_ApplicationCode] = 'EXTERNALTYPE_PRODUCT'
+
+			INNER JOIN [Product] ON [Product_Id] = [CartLinkTo_External_Id]
+			INNER JOIN ProductProductFieldValue ON ProductProductFieldValue_Product_Id = Product_Id
+			INNER JOIN ProductField ON ProductField_Id = ProductProductFieldValue_ProductField_Id
+
+			WHERE ProductField_AppCode = 'PF_HAUTDEF' OR ProductField_AppCode = 'PF_BASSEDEF'
+
+			ORDER BY [CartLinkTo_Id]
+
+		</AttributeTranslation>
+	</SetLocal>
+
+	<!--Paramètres-->
+
+	<Param Name="SendMail_To"  DataType="String" Value="titi@client.com;toto@client.com" />
+
+	<Param Name="SendMail_Bcc"  DataType="String" Value="titi@client.com" />
+
+	<Param Name="SendMail_From"  DataType="String" Value="reporting@client.com" />
+	<Param Name="SendMail_From_Label"  DataType="String" Value="AOXOperationManager" />
+
+	<Param Name="SendMail_ReplyTo"  DataType="String" Value="reporting@client.com" />
+	<Param Name="SendMail_ReplyTo_Label"  DataType="String" Value="client support" />
+
+	<Param Name="SendMail_Object"  DataType="String" Value="">
+		<AttributeTranslation attribut='Value'>
+			Client // Panier n° <GetVariable Name="Global.Cart_Id"></GetVariable>
+		</AttributeTranslation>
+	</Param>
+	
+	<!--Attachments List-->
+	<Param Name="SendMail_JoinedFile" DataType="ObjectAOXList">
+		<ListObjectAOX>
+
+			<!-- Attachment 1 -->
+
+			<ObjectAOX Category="InputStreamAOX_Binary" Type="InputStreamAOX_Binary_Operation">
+				<Param Name="OperationAOX" DataType="DynamicObjectAOX">
+
+					<ObjectAOX Category="OperationAOX_OutputBinary" Type="OperationAOX_OutputBinary_OperationIterator_CreateZip">
+
+						<Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+							<ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_File">
+								<Param Name="FilePath" DataType="String" Value="%resource_folder%\Client\SaveImageToStream.xmlt" />
+							</ObjectAOX>
+						</Param>
+
+						<Param Name="InputStreamAOX_ItemDataList" DataType="DynamicObjectAOX">
+							<ObjectAOX Category="InputStreamAOX_ItemDataList" Type="InputStreamAOX_ItemDataList_Operation">
+								<Param Name="OperationAOX" DataType="DynamicObjectAOX">
+
+									<ObjectAOX Category="OperationAOX_OutputItemDataList" Type="OperationAOX_OutputItemDataList_Read_SQL">
+
+										<Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+											<ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_Static">
+												<Param Name="sText" DataType="String" Value="">
+													<AttributeTranslation attribut='Value'>
+														<GetLocal Name='SQL_CartContent'></GetLocal>
+													</AttributeTranslation>
+												</Param>
+											</ObjectAOX>
+										</Param>
+
+									</ObjectAOX>
+
+								</Param>
+							</ObjectAOX>
+						</Param>
+
+						<Param Name="OutputStreamAOX_Result" DataType="DynamicObjectAOX">
+							<ObjectAOX Category="OutputStreamAOX_Text" Type="OutputStreamAOX_Text_File">
+								<Param Name="FilePath" DataType="String" Value="%resource_folder%\Client\ProcessClient_Result_%timestamp%.txt" />
+
+							</ObjectAOX>
+						</Param>
+
+						<!-- temporaire : sauvegarde en tant que fichier -->
+						<Param Name="OutputStreamAOX_Binary" DataType="DynamicObjectAOX">
+							<ObjectAOX Category="OutputStreamAOX_Binary" Type="OutputStreamAOX_Binary_Memory">
+								<Param Name="OutputLabel" DataType="String" Value="">
+									<AttributeTranslation attribut='Value'>
+										AOX_Generative_Client_Cart_<GetGlobal Name='Cart_Id'></GetGlobal>.zip
+									</AttributeTranslation>
+								</Param>
+							</ObjectAOX>
+						</Param>
+
+					</ObjectAOX>
+
+				</Param>
+			</ObjectAOX>	 
+      
+		</ListObjectAOX>
+	</Param>
+
+	<!--Input/Output de base-->
+
+	<Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+		<ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_Operation">
+			<Param Name="OperationAOX" DataType="DynamicObjectAOX">
+
+			<ObjectAOX Category="OperationAOX_OutputText" Type="OperationAOX_OutputText_HTMLT_To_HTML">
+
+				<!--Paramètres-->
+
+				<!--<Param Name="HTMLT_Parameters" DataType="ObjectAOX">
+				<ObjectAOX Category="ObjectAOX" Type="KeyValueListAOX">
+					<Param Name="Dictionary" DataType="None">
+					<KeyValueListAOX>
+
+						<Param Name="JSONKeyValueList" DataType="None" Value='
+													[
+															{ "name": "UserName", "value": "Eric" },
+															{ "name": "Event_Codebarre", "value": "https://www.client.com" }
+														]' />
+
+					</KeyValueListAOX>
+					</Param>
+				</ObjectAOX>
+				</Param>-->
+
+				<Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+					<ObjectAOX Category="InputStreamAOX_Text" Type="InputStreamAOX_Text_File">
+						<Param Name="FilePath" DataType="String" Value="%resource_folder%\Client\Client_Template_Mail.htmlt" />
+					</ObjectAOX>
+				</Param>
+
+			</ObjectAOX>
+
+			</Param>
+		</ObjectAOX>
+	</Param>
+
+	<Param Name="OutputStreamAOX_Text" DataType="DynamicObjectAOX">
+		<ObjectAOX Category="OutputStreamAOX_Text" Type="OutputStreamAOX_Text_File">
+			<Param Name="FilePath" DataType="String" Value="%resource_folder%\Client\SendMail_Result_%timestamp%.txt" />
+		</ObjectAOX>
+	</Param>
+
+</ObjectAOX>
+
+
+
+
+

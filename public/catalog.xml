@@ -495,6 +495,17 @@ En entrée : InputStreamAOX_ItemDataList.
       <Property Name="InputStreamAOX_ItemDataList" DataType="ObjectAOX" Mandatory="False" />
       <Property Name="bDifferedProcessOperation" DataType="Boolean" Mandatory="False" />
     </Class>
+     <Class Name="OperationAOX_OutputBinary_OperationIterator_CreateZip" Module="LibAOX">
+      <Documentation>Opération d'itération de base, le résultat étant au format zip.
+En entrée : InputStreamAOX_ItemDataList.
+</Documentation>
+      <Property Name="InputStreamAOX" DataType="DynamicObjectAOX" Mandatory="True" />
+      <Property Name="OutputStreamAOX_Debug" DataType="DynamicObjectAOX" Mandatory="False" />
+      <Property Name="OutputStreamAOX_Result" DataType="DynamicObjectAOX" Mandatory="False" />
+      <Property Name="OutputStreamAOX_Binary" DataType="ObjectAOX" Mandatory="False" />
+      <Property Name="InputStreamAOX_ItemDataList" DataType="ObjectAOX" Mandatory="False" />
+      <Property Name="bDifferedProcessOperation" DataType="Boolean" Mandatory="False" />
+    </Class>
   </Category> <Category Name="OperationAOX_OutputImage">
     <Class Name="OperationAOX_OutputImage_HTML_To_Image" Module="LibAOX">
       <Documentation>Opération de génération d'une image à partir d'une entrée HTML.

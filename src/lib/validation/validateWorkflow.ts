@@ -87,7 +87,8 @@ export function validateWorkflow(graph: WorkflowGraph, catalog: CatalogIndex): V
 
       for (const portDef of classDef.portProperties) {
         const port = node.ports[portDef.name];
-        const isEmpty = !port || port.connectedNodeIds.length === 0;
+        const hasRawOverride = node.rawConfigBlobs !== undefined && portDef.name in node.rawConfigBlobs;
+        const isEmpty = (!port || port.connectedNodeIds.length === 0) && !hasRawOverride;
         if (portDef.mandatory && isEmpty) {
           issues.push({
             severity: "error",
@@ -101,7 +102,13 @@ export function validateWorkflow(graph: WorkflowGraph, catalog: CatalogIndex): V
 
       for (const propDef of classDef.scalarProperties) {
         const param = node.params[propDef.name];
-        const isEmpty = !param || isScalarValueEmpty(param.value);
+        // Une valeur fournie via <AttributeTranslation> (contenu dynamique,
+        // ex. <GetVariable>) atterrit en rawConfigBlobs plutôt qu'en param
+        // classique (voir workflowParser) : on ne sait pas l'interpréter,
+        // mais sa seule présence suffit à considérer le paramètre comme
+        // renseigné, pour éviter un faux "manquant".
+        const hasRawOverride = node.rawConfigBlobs !== undefined && propDef.name in node.rawConfigBlobs;
+        const isEmpty = (!param || isScalarValueEmpty(param.value)) && !hasRawOverride;
         if (propDef.mandatory && isEmpty) {
           issues.push({
             severity: "error",

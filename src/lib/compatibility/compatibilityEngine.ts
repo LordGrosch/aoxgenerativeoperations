@@ -13,6 +13,26 @@ import type { CatalogIndex } from "../catalog/catalogTypes";
 const GATEWAY_PATTERN = /^InputStreamAOX_(.+)_Operation$/;
 const GATEWAY_PORT_NAME = "OperationAOX";
 
+/**
+ * Convention confirmée par 3 exemples réels indépendants
+ * (OperationAOX_OutputText_OperationIterator_HtmlPages,
+ * OperationAOX_OutputImage_OperationIterator,
+ * OperationAOX_OutputBinary_OperationIterator_CreateZip) : le port
+ * "InputStreamAOX" de toute classe "*OperationIterator*" pointe vers un
+ * fichier template externe (.xmlt/.htmlt) via InputStreamAOX_Text_File —
+ * jamais un sous-graphe embarqué. Le contenu de ce template (comment il
+ * consomme chaque item) reste hors du graphe qu'on édite, exactement comme
+ * pour un .htmlt classique.
+ */
+const ITERATOR_PATTERN = /OperationIterator/;
+const ITERATOR_TEMPLATE_PORT_NAME = "InputStreamAOX";
+
+function resolveIteratorTemplateRule(ownerType: string, portName: string): CompatibilityRule | null {
+  if (portName !== ITERATOR_TEMPLATE_PORT_NAME) return null;
+  if (!ITERATOR_PATTERN.test(ownerType)) return null;
+  return { kind: "category", category: "InputStreamAOX_Text" };
+}
+
 export type CompatibilityResult =
   | { status: "compatible" }
   | { status: "incompatible"; reason: string }
@@ -59,6 +79,15 @@ export function describeConnection(
     return {
       status: "compatible",
       note: `Passerelle standard : "${portName}" relie vers une opération de sortie de la famille correspondante.`,
+    };
+  }
+
+  if (resolveIteratorTemplateRule(ownerType, portName)) {
+    return {
+      status: "compatible",
+      note:
+        `Convention "OperationIterator" : "${portName}" pointe vers un fichier template externe ` +
+        `(.xmlt/.htmlt), dont le contenu (traitement par item) reste hors du graphe édité ici.`,
     };
   }
 
@@ -133,10 +162,11 @@ export function checkPortCompatibility(
   candidateCategory: string
 ): CompatibilityResult {
   const gatewayRule = resolveGatewayRule(ownerType, portName);
+  const iteratorRule = resolveIteratorTemplateRule(ownerType, portName);
   const key = `${ownerType}.${portName}` as const;
   const entry = compatibilityTable[key];
 
-  const rule = gatewayRule ?? entry?.rule;
+  const rule = gatewayRule ?? iteratorRule ?? entry?.rule;
   if (!rule) {
     return {
       status: "unknown",

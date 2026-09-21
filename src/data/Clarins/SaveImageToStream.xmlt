@@ -1,0 +1,22 @@
+<!--
+    Template pour OperationAOX_OutputBinary_OperationIterator_CreateZip
+-->
+
+<ObjectAOX Category="OperationAOX_OutputImage" Type="OperationAOX_OutputImage_SaveImage">
+
+  <!--Paramètres-->
+
+  <!--Input/Output de base-->
+
+  <Param Name="InputStreamAOX" DataType="DynamicObjectAOX">
+    <ObjectAOX Category="InputStreamAOX_Image" Type="InputStreamAOX_Image_DBMedia_FromId">
+      <Param Name="nMediaId" DataType="Integer" Value="0">
+        <AttributeTranslation attribut='Value'>
+          <GetParameter Name='Media_Id'></GetParameter>
+        </AttributeTranslation>
+      </Param>
+    </ObjectAOX>
+  </Param>
+  
+</ObjectAOX>
+

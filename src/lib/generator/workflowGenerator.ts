@@ -52,17 +52,26 @@ function serializeObjectAOX(graph: WorkflowGraph, nodeId: string, depth: number)
 
   lines.push(`${pad}<ObjectAOX Category="${escapeAttr(node.category)}" Type="${escapeAttr(node.type)}">`);
 
-  for (const param of Object.values(node.params)) {
-    lines.push(serializeParamScalar(param, childPad));
+  const scalarParams = Object.values(node.params);
+  if (scalarParams.length > 0) {
+    lines.push(`${childPad}<!--Paramètres-->`);
+    for (const param of scalarParams) {
+      lines.push(serializeParamScalar(param, childPad));
+    }
   }
 
-  for (const port of Object.values(node.ports)) {
+  const ports = Object.values(node.ports);
+  if (ports.length > 0) {
+    lines.push(`${childPad}<!--Input/Output-->`);
+  }
+  for (const port of ports) {
     lines.push(`${childPad}<Param Name="${escapeAttr(port.name)}" DataType="${escapeAttr(port.declaredDataType)}">`);
     if (port.isList) {
       lines.push(`${childPad}${INDENT_UNIT}<ListObjectAOX>`);
-      for (const childId of port.connectedNodeIds) {
+      port.connectedNodeIds.forEach((childId, index) => {
+        lines.push(`${childPad}${INDENT_UNIT}<!-- Élément ${index + 1} -->`);
         lines.push(serializeObjectAOX(graph, childId, depth + 3));
-      }
+      });
       lines.push(`${childPad}${INDENT_UNIT}</ListObjectAOX>`);
     } else {
       for (const childId of port.connectedNodeIds) {

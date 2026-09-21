@@ -60,7 +60,7 @@ export default function Toolbar() {
       <button className="text-sm border rounded px-2 py-1 hover:bg-gray-50" onClick={() => fileInputRef.current?.click()}>
         Charger un XML
       </button>
-      <input ref={fileInputRef} type="file" accept=".xml" className="hidden" onChange={handleFile} />
+      <input ref={fileInputRef} type="file" accept=".xml,.xmlt" className="hidden" onChange={handleFile} />
       <button
         className="text-sm border rounded px-2 py-1 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
         onClick={handleExport}

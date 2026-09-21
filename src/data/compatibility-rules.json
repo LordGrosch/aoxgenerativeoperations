@@ -161,5 +161,31 @@
     "rule": { "kind": "category", "category": "InputStreamAOX_Text" },
     "observed": true,
     "note": "InputStreamAOX_Text_Static branché (la requête SQL elle-même, en texte)."
+  },
+
+  "OperationAOX_OutputBinary_OperationIterator_CreateZip.OutputStreamAOX_Result": {
+    "rule": { "kind": "category", "category": "OutputStreamAOX_Text" },
+    "observed": true,
+    "note": "Exemple SendMail.xmlt : OutputStreamAOX_Text_File branché en sortie (log de résultat)."
+  },
+  "OperationAOX_OutputBinary_OperationIterator_CreateZip.OutputStreamAOX_Binary": {
+    "rule": { "kind": "category", "category": "OutputStreamAOX_Binary" },
+    "observed": true,
+    "note": "Exemple SendMail.xmlt : OutputStreamAOX_Binary_Memory branché en sortie — le zip est produit directement par l'itération (chaque item traité par SaveImageToStream.xmlt vient l'alimenter)."
+  },
+  "OperationAOX_OutputBinary_OperationIterator_CreateZip.InputStreamAOX_ItemDataList": {
+    "rule": { "kind": "category", "category": "InputStreamAOX_ItemDataList" },
+    "observed": true,
+    "note": "Exemple SendMail.xmlt : InputStreamAOX_ItemDataList_Operation (vers Read_SQL) branché."
+  },
+  "OperationAOX_OutputText_OperationIterator.InputStreamAOX_ItemDataList": {
+    "rule": { "kind": "category", "category": "InputStreamAOX_ItemDataList" },
+    "observed": true,
+    "note": "Exemple ProcessListCarts.xmlt : InputStreamAOX_ItemDataList_Operation (vers Read_SQL) branché. Variante 'de base' (sans _HtmlPages) de l'Iterator texte."
+  },
+  "OperationAOX_OutputImage_SaveImage.InputStreamAOX": {
+    "rule": { "kind": "category", "category": "InputStreamAOX_Image" },
+    "observed": true,
+    "note": "Exemple SaveImageToStream.xmlt : InputStreamAOX_Image_DBMedia_FromId branché en entrée."
   }
 }
