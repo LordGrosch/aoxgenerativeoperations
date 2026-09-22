@@ -4,13 +4,16 @@ import { useMemo, useState } from "react";
 import { useWorkflowStore } from "@/store/workflowStore";
 import { AOX_DRAG_TYPE } from "@/components/canvas/WorkflowCanvas";
 import { getNodeAcceptance } from "@/lib/compatibility/compatibilityEngine";
+import type { ClassDef } from "@/lib/catalog/catalogTypes";
 import SnippetPalette from "./SnippetPalette";
+import ClassDetailsModal from "./ClassDetailsModal";
 
 export default function Palette() {
   const catalog = useWorkflowStore((s) => s.catalog);
   const graph = useWorkflowStore((s) => s.graph);
   const selectedNodeId = useWorkflowStore((s) => s.selectedNodeId);
   const [query, setQuery] = useState("");
+  const [detailsClass, setDetailsClass] = useState<ClassDef | null>(null);
 
   const selectedNode = graph && selectedNodeId ? graph.nodes[selectedNodeId] : null;
 
@@ -95,7 +98,18 @@ export default function Palette() {
                       className={`w-1.5 h-1.5 rounded-full ${isOutputMatch ? "bg-purple-400" : "bg-transparent"}`}
                     />
                   </span>
-                  <span className="truncate">{c.type}</span>
+                  <span className="truncate flex-1">{c.type}</span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setDetailsClass(c);
+                    }}
+                    onDragStart={(e) => e.stopPropagation()}
+                    title="Fiche technique"
+                    className="shrink-0 text-gray-400 hover:text-blue-600 text-[11px] border rounded-full w-4 h-4 flex items-center justify-center"
+                  >
+                    i
+                  </button>
                 </div>
               );
             })}
@@ -103,6 +117,8 @@ export default function Palette() {
         ))}
         {grouped.length === 0 && <div className="p-3 text-gray-400">Aucun résultat.</div>}
       </div>
+
+      {detailsClass && <ClassDetailsModal classDef={detailsClass} onClose={() => setDetailsClass(null)} />}
     </div>
   );
 }

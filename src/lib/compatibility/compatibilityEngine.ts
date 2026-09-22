@@ -146,6 +146,42 @@ function resolveGatewayRule(ownerType: string, portName: string): CompatibilityR
   return { kind: "category", category: `OperationAOX_Output${family}` };
 }
 
+export interface PortRequirementDescription {
+  status: "known" | "unknown";
+  /** Description lisible de ce qu'accepte le port, ex. "InputStreamAOX_Text" ou "InputStreamAOX_* (toute sous-famille)". */
+  ruleText: string;
+  note?: string;
+  isList: boolean;
+}
+
+/**
+ * Décrit ce qu'un port accepte dans l'absolu (sans candidat réel à
+ * vérifier) — utilisé pour la fiche technique d'une classe dans la
+ * palette, contrairement à checkPortCompatibility qui vérifie une
+ * connexion précise.
+ */
+export function describePortRequirement(ownerType: string, portName: string): PortRequirementDescription {
+  const isList = isPortListCapable(ownerType, portName);
+  const gatewayRule = resolveGatewayRule(ownerType, portName);
+  const iteratorRule = resolveIteratorTemplateRule(ownerType, portName);
+  const key = `${ownerType}.${portName}` as const;
+  const entry = compatibilityTable[key];
+  const rule = gatewayRule ?? iteratorRule ?? entry?.rule;
+
+  if (!rule) {
+    return { status: "unknown", ruleText: "Aucune règle connue", isList };
+  }
+
+  const ruleText = rule.kind === "category" ? rule.category : `${rule.prefix}_* (toute sous-famille)`;
+  const note = gatewayRule
+    ? "Passerelle standard (convention InputStreamAOX_<Famille>_Operation)."
+    : iteratorRule
+      ? "Convention OperationIterator (pointe vers un fichier template externe)."
+      : entry?.note;
+
+  return { status: "known", ruleText, note, isList };
+}
+
 /**
  * Détermine si un nœud de Category `candidateCategory` peut être branché
  * sur le port `portName` d'un nœud de Type `ownerType`.

@@ -1,17 +1,11 @@
 "use client";
 
-import { AoxNodeData, getNodeKind, inputHandleId, OUTPUT_HANDLE_ID } from "@/lib/reactflow/graphAdapter";
 import { Handle, Position } from "reactflow";
-
+import type { AoxNodeData } from "@/lib/reactflow/graphAdapter";
+import { inputHandleId, OUTPUT_HANDLE_ID } from "@/lib/reactflow/graphAdapter";
+import { resolveNodeColor } from "@/lib/reactflow/nodeColors";
 
 const NODE_WIDTH = 220;
-
-const KIND_STYLES = {
-  operation: { header: "bg-indigo-100 border-indigo-300", border: "border-indigo-300" },
-  input: { header: "bg-emerald-100 border-emerald-300", border: "border-emerald-300" },
-  output: { header: "bg-amber-100 border-amber-300", border: "border-amber-300" },
-  other: { header: "bg-gray-100 border-gray-300", border: "border-gray-300" },
-} as const;
 
 interface AoxNodeProps {
   data: AoxNodeData;
@@ -20,17 +14,19 @@ interface AoxNodeProps {
 
 export default function AoxNode({ data, selected }: AoxNodeProps) {
   const { node, portViews, isRoot, documentation } = data;
-  const kind = getNodeKind(node.category);
-  const styles = KIND_STYLES[kind];
+  const headerColor = resolveNodeColor(node);
 
   return (
     <div className="group relative" style={{ width: NODE_WIDTH }}>
       <div
         className={`rounded-md border bg-white shadow-sm text-xs ${
-          selected ? "border-blue-500 ring-2 ring-blue-200" : styles.border
+          selected ? "border-blue-500 ring-2 ring-blue-200" : "border-gray-300"
         }`}
       >
-        <div className={`px-2 py-1 border-b rounded-t-md flex items-center justify-between gap-1 ${styles.header}`}>
+        <div
+          className="px-2 py-1 border-b border-gray-300 rounded-t-md flex items-center justify-between gap-1"
+          style={{ backgroundColor: headerColor }}
+        >
           <span className="font-medium truncate" title={node.type}>
             {node.type}
           </span>

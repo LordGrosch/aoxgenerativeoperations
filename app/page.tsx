@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import Palette from "@/components/palette/Palette";
 import WorkflowCanvas from "@/components/canvas/WorkflowCanvas";
 import Inspector from "@/components/inspector/Inspector";
@@ -8,6 +9,18 @@ import XmlPreview from "@/components/XmlPreview";
 import ValidationPanel from "@/components/ValidationPanel";
 import Toolbar from "@/components/Toolbar";
 import { useWorkflowStore } from "@/store/workflowStore";
+
+function ColResizeHandle() {
+  return (
+    <PanelResizeHandle className="w-1 bg-gray-200 hover:bg-blue-400 active:bg-blue-500 transition-colors cursor-col-resize" />
+  );
+}
+
+function RowResizeHandle() {
+  return (
+    <PanelResizeHandle className="h-1 bg-gray-200 hover:bg-blue-400 active:bg-blue-500 transition-colors cursor-row-resize" />
+  );
+}
 
 export default function Home() {
   const loadCatalog = useWorkflowStore((s) => s.loadCatalog);
@@ -50,24 +63,37 @@ export default function Home() {
   return (
     <div className="h-screen flex flex-col">
       <Toolbar />
-      <div className="flex-1 flex overflow-hidden">
-        <div className="w-64 border-r overflow-hidden shrink-0">
-          <Palette />
-        </div>
-        <div className="flex-1 flex flex-col min-w-0">
-          <div className="flex-1 min-h-0">
-            <WorkflowCanvas />
-          </div>
-          <ValidationPanel />
-        </div>
-        <div className="w-80 border-l overflow-hidden shrink-0 flex flex-col">
-          <div className="flex-1 min-h-0 overflow-hidden">
-            <Inspector />
-          </div>
-          <div className="flex-1 min-h-0 border-t overflow-hidden">
-            <XmlPreview />
-          </div>
-        </div>
+      <div className="flex-1 min-h-0">
+        <PanelGroup direction="horizontal" autoSaveId="aox-main-layout">
+          <Panel defaultSize={22} minSize={14} maxSize={40} className="overflow-hidden">
+            <Palette />
+          </Panel>
+
+          <ColResizeHandle />
+
+          <Panel defaultSize={56} minSize={30} className="overflow-hidden">
+            <div className="h-full flex flex-col">
+              <div className="flex-1 min-h-0">
+                <WorkflowCanvas />
+              </div>
+              <ValidationPanel />
+            </div>
+          </Panel>
+
+          <ColResizeHandle />
+
+          <Panel defaultSize={22} minSize={14} maxSize={45} className="overflow-hidden">
+            <PanelGroup direction="vertical" autoSaveId="aox-right-column">
+              <Panel defaultSize={50} minSize={15} className="overflow-hidden">
+                <Inspector />
+              </Panel>
+              <RowResizeHandle />
+              <Panel defaultSize={50} minSize={15} className="overflow-hidden">
+                <XmlPreview />
+              </Panel>
+            </PanelGroup>
+          </Panel>
+        </PanelGroup>
       </div>
     </div>
   );

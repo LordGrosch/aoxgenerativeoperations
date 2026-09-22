@@ -1,0 +1,19 @@
+{
+  "byKind": {
+    "operation": "#e0e7ff",
+    "input": "#d1fae5",
+    "output": "#fef3c7",
+    "other": "#f3f4f6"
+  },
+
+  "byType": {},
+
+  "fileReferenceRules": [
+    {
+      "paramName": "FilePath",
+      "extensions": [".xml", ".xmlt", ".htmlt"],
+      "color": "#fef08a",
+      "note": "Jaune distinct : ce fichier référence un autre document d'opération (template .xmlt/.htmlt ou sous-workflow .xml), pas une simple donnée/sortie brute."
+    }
+  ]
+}
