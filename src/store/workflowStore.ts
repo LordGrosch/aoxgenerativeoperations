@@ -57,10 +57,14 @@ interface WorkflowState {
   catalog: CatalogIndex | null;
   graph: WorkflowGraph | null;
   layout: Record<string, Position>;
+  /** Largeur (en unités du canvas) de chaque nœud ; NODE_DEFAULT_WIDTH si absent. */
+  nodeWidths: Record<string, number>;
   selectedNodeId: string | null;
   validation: ValidationResult | null;
   /** XML tel que chargé initialement (avant toute édition), pour la vue diff. null si le workflow a été créé de zéro dans l'éditeur. */
   loadedXml: string | null;
+  /** Nom du fichier chargé (affiché dans la barre d'outils). null si créé de zéro. */
+  loadedFileName: string | null;
   snippets: WorkflowSnippet[];
 
   past: (WorkflowGraph | null)[];
@@ -70,18 +74,28 @@ interface WorkflowState {
   redo: () => void;
 
   loadCatalog: (xml: string) => void;
-  loadWorkflow: (xml: string) => void;
+  loadWorkflow: (xml: string, fileName: string) => void;
   exportXml: () => string;
 
   selectNode: (id: string | null) => void;
   setNodePosition: (id: string, pos: Position) => void;
+  setNodeWidth: (id: string, width: number) => void;
+  /** Fait de ce nœud la nouvelle racine du workflow (n'efface rien : l'ancienne racine et ses anciens descendants exclusifs restent présents, potentiellement orphelins — voir pruneOrphans). */
+  setRoot: (nodeId: string) => void;
+  /** Supprime manuellement tous les nœuds actuellement inatteignables depuis la racine. */
+  pruneOrphans: () => void;
 
   /** Crée un nœud non connecté. Si aucun graphe n'existe encore, ce nœud en devient la racine. */
   addNode: (type: string) => string;
+  /** Détache ce nœud de son/ses parent(s). Ne supprime PAS ses anciens
+   * descendants : ils restent dans le graphe (potentiellement orphelins),
+   * pour ne jamais perdre de travail par erreur. Utiliser pruneOrphans()
+   * pour les nettoyer explicitement une fois sûr de ne plus en avoir besoin. */
   deleteNode: (id: string) => void;
   updateParam: (nodeId: string, paramName: string, value: string | number | boolean) => void;
   updateRawConfigBlob: (nodeId: string, blobKey: string, newRawXml: string) => void;
   connect: (parentId: string, portName: string, childId: string) => ConnectResult;
+  /** Retire ce nœud du port. Ne supprime PAS son sous-arbre (même logique que deleteNode). */
   disconnect: (parentId: string, portName: string, childId: string) => void;
 
   loadSnippetsFromStorage: () => void;
@@ -143,9 +157,11 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => {
     catalog: null,
     graph: null,
     layout: {},
+    nodeWidths: {},
     selectedNodeId: null,
     validation: null,
     loadedXml: null,
+    loadedFileName: null,
     snippets: [],
     past: [],
     future: [],
@@ -188,7 +204,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => {
 
     loadCatalog: (xml) => set({ catalog: parseCatalog(xml) }),
 
-    loadWorkflow: (xml) => {
+    loadWorkflow: (xml, fileName) => {
       // Charger un (nouveau) fichier réinitialise l'historique : "annuler"
       // vers un état d'un autre fichier n'aurait pas de sens.
       const graph = parseWorkflowXml(xml);
@@ -196,8 +212,10 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => {
       set({
         graph,
         layout,
+        nodeWidths: {},
         selectedNodeId: null,
         loadedXml: xml,
+        loadedFileName: fileName,
         past: [],
         future: [],
         pendingParamEdit: null,
@@ -216,6 +234,42 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => {
     },
 
     setNodePosition: (id, pos) => set((s) => ({ layout: { ...s.layout, [id]: pos } })),
+
+    setNodeWidth: (id, width) => set((s) => ({ nodeWidths: { ...s.nodeWidths, [id]: width } })),
+
+    setRoot: (nodeId) => {
+      flushPendingParamEdit();
+      const { graph } = get();
+      if (!graph || !graph.nodes[nodeId] || graph.rootNodeId === nodeId) return;
+      const before = snapshotGraph(graph);
+      graph.rootNodeId = nodeId;
+      // Volontairement AUCUN élagage ici : l'ancienne racine et ses anciens
+      // descendants exclusifs restent dans le graphe (visibles, potentiellement
+      // orphelins) — l'utilisateur peut les reconnecter ou les nettoyer
+      // explicitement via pruneOrphans(), jamais une suppression silencieuse.
+      set({ graph: { ...graph } });
+      pushHistory(before);
+      get().runValidation();
+    },
+
+    pruneOrphans: () => {
+      flushPendingParamEdit();
+      const { graph, layout, nodeWidths } = get();
+      if (!graph) return;
+      const before = snapshotGraph(graph);
+      pruneUnreachableNodes(graph);
+
+      const newLayout: Record<string, Position> = {};
+      const newWidths: Record<string, number> = {};
+      for (const id of Object.keys(graph.nodes)) {
+        if (layout[id]) newLayout[id] = layout[id];
+        if (nodeWidths[id] !== undefined) newWidths[id] = nodeWidths[id];
+      }
+
+      set({ graph: { ...graph }, layout: newLayout, nodeWidths: newWidths });
+      pushHistory(before);
+      get().runValidation();
+    },
 
     addNode: (type) => {
       flushPendingParamEdit();
@@ -242,18 +296,20 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => {
       if (!graph || id === graph.rootNodeId) return; // la racine ne se supprime pas directement
       const before = snapshotGraph(graph);
 
+      // On détache le nœud de tous ses parents, mais on NE supprime PAS ses
+      // anciens descendants : ils restent dans le graphe, potentiellement
+      // orphelins (visibles avec un indicateur dédié sur le canvas). Voir
+      // pruneOrphans() pour un nettoyage explicite quand on est sûr de ne
+      // plus en avoir besoin — jamais une suppression en cascade implicite.
       for (const node of Object.values(graph.nodes)) {
         for (const port of Object.values(node.ports)) {
           port.connectedNodeIds = port.connectedNodeIds.filter((cid) => cid !== id);
         }
       }
       delete graph.nodes[id];
-      pruneUnreachableNodes(graph);
 
-      const newLayout: Record<string, Position> = {};
-      for (const [nid, pos] of Object.entries(layout)) {
-        if (graph.nodes[nid]) newLayout[nid] = pos;
-      }
+      const newLayout = { ...layout };
+      delete newLayout[id];
 
       set({ graph: { ...graph }, layout: newLayout, selectedNodeId: null });
       pushHistory(before);
@@ -354,7 +410,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => {
       if (!port) return;
       const before = snapshotGraph(graph);
       port.connectedNodeIds = port.connectedNodeIds.filter((cid) => cid !== childId);
-      pruneUnreachableNodes(graph);
+      // Pas d'élagage automatique ici non plus : voir deleteNode.
       set({ graph: { ...graph } });
       pushHistory(before);
       get().runValidation();

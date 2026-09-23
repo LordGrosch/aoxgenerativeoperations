@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import ReactFlow, {
   Background,
   Controls,
@@ -26,6 +26,7 @@ function CanvasInner() {
   const catalog = useWorkflowStore((s) => s.catalog);
   const graph = useWorkflowStore((s) => s.graph);
   const layout = useWorkflowStore((s) => s.layout);
+  const nodeWidths = useWorkflowStore((s) => s.nodeWidths);
   const selectedNodeId = useWorkflowStore((s) => s.selectedNodeId);
   const selectNode = useWorkflowStore((s) => s.selectNode);
   const setNodePosition = useWorkflowStore((s) => s.setNodePosition);
@@ -35,11 +36,15 @@ function CanvasInner() {
   const deleteNode = useWorkflowStore((s) => s.deleteNode);
   const instantiateSnippet = useWorkflowStore((s) => s.instantiateSnippet);
 
+  // Sélection d'arête : purement une préoccupation d'affichage du canvas
+  // (pas besoin de la faire vivre dans le store global comme selectedNodeId).
+  const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
+
   const { screenToFlowPosition } = useReactFlow();
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const elements =
-    catalog && graph ? toReactFlowElements(graph, layout, catalog) : { nodes: [], edges: [] };
+    catalog && graph ? toReactFlowElements(graph, layout, nodeWidths, catalog) : { nodes: [], edges: [] };
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
@@ -122,14 +127,24 @@ function CanvasInner() {
     <div className="h-full w-full" ref={wrapperRef} onDrop={onDrop} onDragOver={(e) => e.preventDefault()}>
       <ReactFlow
         nodes={elements.nodes.map((n) => ({ ...n, selected: n.id === selectedNodeId }))}
-        edges={elements.edges}
+        edges={elements.edges.map((e) => ({ ...e, selected: e.id === selectedEdgeId }))}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        onNodeClick={(_, node) => selectNode(node.id)}
-        onPaneClick={() => selectNode(null)}
+        onNodeClick={(_, node) => {
+          setSelectedEdgeId(null);
+          selectNode(node.id);
+        }}
+        onEdgeClick={(_, edge) => {
+          selectNode(null);
+          setSelectedEdgeId(edge.id);
+        }}
+        onPaneClick={() => {
+          selectNode(null);
+          setSelectedEdgeId(null);
+        }}
         deleteKeyCode={["Backspace", "Delete"]}
         fitView
       >

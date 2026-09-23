@@ -2,6 +2,11 @@ import type { Edge, Node } from "reactflow";
 import type { WorkflowGraph, WorkflowNode } from "../model/types";
 import type { CatalogIndex } from "../catalog/catalogTypes";
 import { describeConnection } from "../compatibility/compatibilityEngine";
+import { getReachableNodeIds } from "@/types/types";
+
+export const NODE_DEFAULT_WIDTH = 220;
+export const NODE_MIN_WIDTH = 160;
+export const NODE_MAX_WIDTH = 560;
 
 /**
  * Convention de représentation visuelle : chaque WorkflowNode a un unique
@@ -34,8 +39,13 @@ export interface AoxNodeData {
    * documenté par le catalogue — on veut quand même pouvoir le voir/déconnecter). */
   portViews: AoxPortView[];
   isRoot: boolean;
+  /** true si ce nœud n'est plus atteignable depuis la racine (détaché lors
+   * d'une suppression/déconnexion, qui ne supprime jamais en cascade —
+   * voir workflowStore). Ne sera pas exporté tant qu'il reste dans cet état. */
+  isOrphan: boolean;
   /** Documentation du catalogue pour ce Type, si disponible. */
   documentation?: string;
+  width: number;
 }
 
 export interface AoxEdgeData {
@@ -62,10 +72,12 @@ export function getNodeKind(category: string): NodeKind {
 export function toReactFlowElements(
   graph: WorkflowGraph,
   layout: Record<string, { x: number; y: number }>,
+  nodeWidths: Record<string, number>,
   catalog: CatalogIndex
 ): { nodes: Node<AoxNodeData>[]; edges: Edge<AoxEdgeData>[] } {
   const nodes: Node<AoxNodeData>[] = [];
   const edges: Edge<AoxEdgeData>[] = [];
+  const reachable = getReachableNodeIds(graph);
 
   for (const node of Object.values(graph.nodes)) {
     const classDef = catalog.classesByType.get(node.type);
@@ -82,7 +94,14 @@ export function toReactFlowElements(
       id: node.id,
       type: "aoxNode",
       position: layout[node.id] ?? { x: 0, y: 0 },
-      data: { node, portViews, isRoot: node.id === graph.rootNodeId, documentation: classDef?.documentation },
+      data: {
+        node,
+        portViews,
+        isRoot: node.id === graph.rootNodeId,
+        isOrphan: !reachable.has(node.id),
+        documentation: classDef?.documentation,
+        width: nodeWidths[node.id] ?? NODE_DEFAULT_WIDTH,
+      },
     });
 
     for (const port of Object.values(node.ports)) {

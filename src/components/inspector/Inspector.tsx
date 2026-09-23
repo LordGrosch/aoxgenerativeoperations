@@ -4,6 +4,7 @@ import { useWorkflowStore } from "@/store/workflowStore";
 import CompatibilitySnippetButton from "@/components/CompatibilitySnippetButton";
 import DictionaryEditor from "@/components/inspector/DictionaryEditor";
 import { parseDictionaryBlob } from "@/lib/rawconfig/keyValueEditor";
+import { getReachableNodeIds } from "@/types/types";
 
 export default function Inspector() {
   const catalog = useWorkflowStore((s) => s.catalog);
@@ -14,6 +15,7 @@ export default function Inspector() {
   const deleteNode = useWorkflowStore((s) => s.deleteNode);
   const saveSnippetFromNode = useWorkflowStore((s) => s.saveSnippetFromNode);
   const updateRawConfigBlob = useWorkflowStore((s) => s.updateRawConfigBlob);
+  const setRoot = useWorkflowStore((s) => s.setRoot);
 
   if (!catalog || !graph || !selectedNodeId) {
     return <div className="p-3 text-sm text-gray-400">Sélectionnez un nœud pour voir ses propriétés.</div>;
@@ -25,6 +27,7 @@ export default function Inspector() {
   const classDef = catalog.classesByType.get(node.type);
   const issues = (validation?.issues ?? []).filter((i) => i.nodeId === selectedNodeId);
   const isRoot = selectedNodeId === graph.rootNodeId;
+  const isOrphan = !getReachableNodeIds(graph).has(selectedNodeId);
 
   return (
     <div className="p-3 text-sm space-y-3 overflow-y-auto h-full">
@@ -43,6 +46,14 @@ export default function Inspector() {
         )}
       </div>
 
+      {isOrphan && (
+        <div className="text-xs bg-gray-100 text-gray-600 rounded px-2 py-1">
+          ⚠ Ce nœud n&apos;est actuellement pas atteignable depuis la racine (orphelin) : il ne sera pas inclus dans l&apos;export
+          tant qu&apos;il n&apos;est pas reconnecté. Utilisez &quot;🧹 Nettoyer les orphelins&quot; dans la barre d&apos;outils pour le supprimer
+          définitivement si vous n&apos;en avez plus besoin.
+        </div>
+      )}
+
       <button
         onClick={() => {
           const name = window.prompt("Nom du snippet :", node.type);
@@ -53,6 +64,16 @@ export default function Inspector() {
       >
         💾 Enregistrer comme snippet
       </button>
+
+      {!isRoot && (
+        <button
+          onClick={() => setRoot(node.id)}
+          className="text-xs text-blue-700 border border-blue-200 rounded px-2 py-1 hover:bg-blue-50 w-full"
+          title="Fait de ce nœud le point de départ de l'export XML. L'ancienne racine reste dans le graphe (potentiellement orpheline), rien n'est supprimé."
+        >
+          👑 Définir comme racine
+        </button>
+      )}
 
       {classDef?.documentation && (
         <p className="text-xs text-gray-600 whitespace-pre-line border-l-2 border-gray-200 pl-2">

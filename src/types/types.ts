@@ -83,12 +83,8 @@ export function addNode(graph: WorkflowGraph, node: WorkflowNode): void {
   graph.nodes[node.id] = node;
 }
 
-/**
- * Supprime du graphe tous les nœuds qui ne sont plus atteignables depuis la
- * racine (ex. après suppression manuelle d'un nœud, ses anciens enfants
- * peuvent se retrouver orphelins s'ils n'étaient utilisés que par lui).
- */
-export function pruneUnreachableNodes(graph: WorkflowGraph): void {
+/** Ensemble des ids atteignables en descendant depuis la racine via les ports. */
+export function getReachableNodeIds(graph: WorkflowGraph): Set<string> {
   const reachable = new Set<string>();
   const stack = [graph.rootNodeId];
   while (stack.length > 0) {
@@ -101,6 +97,16 @@ export function pruneUnreachableNodes(graph: WorkflowGraph): void {
       stack.push(...port.connectedNodeIds);
     }
   }
+  return reachable;
+}
+
+/**
+ * Supprime du graphe tous les nœuds qui ne sont plus atteignables depuis la
+ * racine (ex. après suppression manuelle d'un nœud, ses anciens enfants
+ * peuvent se retrouver orphelins s'ils n'étaient utilisés que par lui).
+ */
+export function pruneUnreachableNodes(graph: WorkflowGraph): void {
+  const reachable = getReachableNodeIds(graph);
   for (const id of Object.keys(graph.nodes)) {
     if (!reachable.has(id)) delete graph.nodes[id];
   }
