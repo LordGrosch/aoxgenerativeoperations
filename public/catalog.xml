@@ -1,4 +1,4 @@
-<Catalog Date="2026-03-04 14:41:30" VersionAOX="2026.304.1441.2034" VersionTFS="97342">
+<Catalog Date="2026-09-24 15:04:31" VersionAOX="2026.924.1504.1989" VersionTFS="98437">
   <Category Name="ObjectAOX">
     <Class Name="QRCodeAOX" Module="LibAOX">
       <Property Name="sContent" DataType="String" Mandatory="False" />
@@ -35,13 +35,14 @@
       <Property Name="response_format" DataType="String" Mandatory="False" />
     </Class>
     <Class Name="KeyValueListAOX" Module="LibAOX">
-      <Property Name="Dictionary" DataType="ObjectAOX" Mandatory="False" />
+      <Property Name="Dictionary" DataType="DynamicObjectAOX" Mandatory="False" />
     </Class>
     <Class Name="KeyValueAOX" Module="LibAOX">
       <Property Name="Key" DataType="String" Mandatory="False" />
       <Property Name="Value" DataType="String" Mandatory="False" />
     </Class>
-  </Category><Category Name="FormAOX"></Category>
+  </Category>
+  <Category Name="FormAOX"></Category>
   <Category Name="ComponentHTMLAOX"></Category>
   <Category Name="ParserAOX">
     <Class Name="ParserAOX_Default" Module="LibAOX">
@@ -64,7 +65,8 @@
       <Documentation>Parser construisant une arborescence XML de tous les noeuds rencontrés dans le HTMLT.
 </Documentation>
     </Class>
-  </Category><Category Name="InputStreamAOX_Text">
+  </Category>
+  <Category Name="InputStreamAOX_Text">
     <Class Name="InputStreamAOX_Text_File" Module="LibAOX">
       <Documentation>InputStream : fichier texte identifié par son chemin.
 Le chemin peut utiliser la macro '%resource_folder%' (remplacé par le paramètre AOX_ExternalResourcesPhysicalPath).
@@ -109,7 +111,8 @@ On peut spécifier le séparateur (CSVSeparator) et si une ligne de titres est a
       <Documentation>InputStream : ne fait rien (pour les opérations ne nécessitant pas d'InputStream).
 </Documentation>
     </Class>
-  </Category><Category Name="InputStreamAOX_Binary">
+  </Category>
+  <Category Name="InputStreamAOX_Binary">
     <Class Name="InputStreamAOX_Binary_File" Module="LibAOX">
       <Documentation>InputStream : fichier binaire identifié par son chemin.
 Le chemin peut utiliser la macro '%resource_folder%' (remplacé par le paramètre AOX_ExternalResourcesPhysicalPath).
@@ -136,7 +139,8 @@ Le chemin peut utiliser la macro '%resource_folder%' (remplacé par le paramètr
 </Documentation>
       <Property Name="URL" DataType="String" Mandatory="True" />
     </Class>
-  </Category> <Category Name="InputStreamAOX_Image">
+  </Category>
+  <Category Name="InputStreamAOX_Image">
     <Class Name="InputStreamAOX_Image_Operation" Module="LibAOX">
       <Documentation>InputStream : passerelle permettant de récupérer l'OutputStream d'une OperationAOX de type OperationAOX_OutputImage.
 </Documentation>
@@ -161,7 +165,8 @@ Le chemin peut utiliser la macro '%resource_folder%' (remplacé par le paramètr
 </Documentation>
       <Property Name="OperationAOX" DataType="DynamicObjectAOX" Mandatory="True" />
     </Class>
-  </Category> <Category Name="InputStreamAOX_None">
+  </Category>
+  <Category Name="InputStreamAOX_None">
     <Class Name="InputStreamAOX_None_ListInput" Module="LibAOX">
       <Documentation>InputStream : liste d'InputStream de type InputStreamAOX_Binary.
 </Documentation>
@@ -178,7 +183,8 @@ Il est également possible de chercher des fichiers appairés (PairedBy).
       <Property Name="Take" DataType="Integer" Mandatory="False" />
       <Property Name="PairedBy" DataType="String" Mandatory="False" />
     </Class>
-  </Category><Category Name="OutputStreamAOX_Text">
+  </Category>
+  <Category Name="OutputStreamAOX_Text">
     <Class Name="OutputStreamAOX_Text_File" Module="LibAOX">
       <Documentation>OutputStream : fichier texte identifié par son chemin.
 Le chemin peut utiliser la macro '%resource_folder%' (remplacé par le paramètre AOX_ExternalResourcesPhysicalPath).
@@ -213,7 +219,8 @@ Le fichier est ouvert en mode append au moment de l'écriture, son contenu est d
 </Documentation>
       <Property Name="OutputLabel" DataType="String" Mandatory="False" />
     </Class>
-  </Category> <Category Name="OutputStreamAOX_Binary">
+  </Category>
+  <Category Name="OutputStreamAOX_Binary">
     <Class Name="OutputStreamAOX_Binary_File" Module="LibAOX">
       <Documentation>OutputStream : fichier binaire identifié par son chemin.
 Le chemin peut utiliser la macro '%resource_folder%' (remplacé par le paramètre AOX_ExternalResourcesPhysicalPath).
@@ -239,7 +246,21 @@ Le chemin peut utiliser la macro '%resource_folder%' (remplacé par le paramètr
       <Property Name="MediaAppCode" DataType="String" Mandatory="True" />
       <Property Name="FolderAppCode" DataType="String" Mandatory="False" />
     </Class>
-  </Category><Category Name="OutputStreamAOX_Image">
+    <Class Name="OutputStreamAOX_Binary_DBMediaExternalResource" Module="LibAOX">
+      <Documentation>OutputStream : média stocké en BLOB dans une base AOX, créé dans le folder désigné par son Folder_AppCode.
+</Documentation>
+      <Property Name="OutputLabel" DataType="String" Mandatory="False" />
+      <Property Name="MediaAppCode" DataType="String" Mandatory="False" />
+      <Property Name="FolderAppCode" DataType="String" Mandatory="False" />
+      <Property Name="FilePath" DataType="String" Mandatory="False" />
+      <Property Name="ResourcePath" DataType="String" Mandatory="False" />
+      <Property Name="FolderId" DataType="Integer" Mandatory="False" />
+      <Property Name="MediaType" DataType="String" Mandatory="False" />
+      <Property Name="MediaAppCode" DataType="String" Mandatory="False" />
+      <Property Name="TypeMime" DataType="String" Mandatory="False" />
+    </Class>
+  </Category>
+  <Category Name="OutputStreamAOX_Image">
     <Class Name="OutputStreamAOX_Image" Module="LibAOX">
       <Property Name="OutputLabel" DataType="String" Mandatory="False" />
     </Class>
@@ -255,13 +276,15 @@ Le chemin peut utiliser la macro '%resource_folder%' (remplacé par le paramètr
       <Property Name="OutputLabel" DataType="String" Mandatory="False" />
       <Property Name="FilePath" DataType="String" Mandatory="True" />
     </Class>
-  </Category> <Category Name="OutputStreamAOX_ItemDataList">
+  </Category>
+  <Category Name="OutputStreamAOX_ItemDataList">
     <Class Name="OutputStreamAOX_ItemDataList_Memory" Module="LibAOX">
       <Documentation>OutputStream : liste de ItemData en mémoire (utilisé par InputStreamAOX_ItemDataList_Operation).
 </Documentation>
       <Property Name="OutputLabel" DataType="String" Mandatory="False" />
     </Class>
-  </Category> <Category Name="OperationAOX_OutputText">
+  </Category>
+  <Category Name="OperationAOX_OutputText">
     <Class Name="OperationAOX_OutputText_HTMLT_To_HTML" Module="LibAOX">
       <Documentation>Opération prenant en entrée un HTMLT, accompagné d'une liste de paramètres (sous forme de clés/valeurs).
 Le résultat est le HTML 'traduit', dans lequel les paramètres sont remplacés par leurs valeurs.
@@ -310,7 +333,8 @@ Le résultat est un flux CSV contenant toutes les colonnes du résultat de la re
       <Property Name="OutputStreamAOX_Result" DataType="DynamicObjectAOX" Mandatory="False" />
       <Property Name="OutputStreamAOX_Text" DataType="ObjectAOX" Mandatory="False" />
       <Property Name="QRCode" DataType="ObjectAOX" Mandatory="False" />
-    </Class> <Class Name="OperationAOX_OutputText_ScriptXML" Module="LibAOX">
+    </Class>
+    <Class Name="OperationAOX_OutputText_ScriptXML" Module="LibAOX">
       <Documentation>Opération permettant d'exécuter une opération donnée par un script XML.
 </Documentation>
       <Property Name="InputStreamAOX" DataType="DynamicObjectAOX" Mandatory="True" />
@@ -336,7 +360,8 @@ Le résultat est un flux CSV contenant toutes les colonnes du résultat de la re
       <Property Name="SendMail_Object" DataType="String" Mandatory="True" />
       <Property Name="SendMail_JoinedFile" DataType="DynamicObjectAOX" Mandatory="False" />
       <Property Name="sEmailType" DataType="String" Mandatory="False" />
-    </Class> <Class Name="OperationAOX_SendStandardMail" Module="LibAOX">
+    </Class>
+    <Class Name="OperationAOX_SendStandardMail" Module="LibAOX">
       <Documentation>Opération d'envoi de mail standard.
 L'interface est simplifiée pour une utilisation plus évidente par un non-spécialiste.
 </Documentation>
@@ -358,7 +383,8 @@ L'interface est simplifiée pour une utilisation plus évidente par un non-spéc
     </Class>
     <Class Name="OperationAOX_OutputText_ConvertBinaryToBase64" Module="LibAOX">
       <Documentation>Opération de conversion d'une chaîne en base 64.
-</Documentation>  <Property Name="InputStreamAOX" DataType="DynamicObjectAOX" Mandatory="True" />
+</Documentation>
+      <Property Name="InputStreamAOX" DataType="DynamicObjectAOX" Mandatory="True" />
       <Property Name="OutputStreamAOX_Debug" DataType="DynamicObjectAOX" Mandatory="False" />
       <Property Name="OutputStreamAOX_Result" DataType="DynamicObjectAOX" Mandatory="False" />
       <Property Name="OutputStreamAOX_Text" DataType="ObjectAOX" Mandatory="False" />
@@ -374,7 +400,8 @@ L'interface est simplifiée pour une utilisation plus évidente par un non-spéc
     <Class Name="OperationAOX_OutputText_Inclusion" Module="LibAOX">
       <Documentation>Opération d'inclusion : un tag dans l'input d'entrée est remplacé par l'input InputStreamAOX_Include.
 </Documentation>
-      <Property Name="InputStreamAOX" DataType="DynamicObjectAOX" Mandatory="True" />     <Property Name="OutputStreamAOX_Debug" DataType="DynamicObjectAOX" Mandatory="False" />
+      <Property Name="InputStreamAOX" DataType="DynamicObjectAOX" Mandatory="True" />
+      <Property Name="OutputStreamAOX_Debug" DataType="DynamicObjectAOX" Mandatory="False" />
       <Property Name="OutputStreamAOX_Result" DataType="DynamicObjectAOX" Mandatory="False" />
       <Property Name="OutputStreamAOX_Text" DataType="ObjectAOX" Mandatory="False" />
       <Property Name="TagToReplace" DataType="String" Mandatory="False" />
@@ -407,7 +434,8 @@ En entrée : InputStreamAOX_ItemDataList.
       <Property Name="OutputStreamAOX_Debug" DataType="DynamicObjectAOX" Mandatory="False" />
       <Property Name="OutputStreamAOX_Result" DataType="DynamicObjectAOX" Mandatory="False" />
       <Property Name="OutputStreamAOX_Text" DataType="ObjectAOX" Mandatory="False" />
-      <Property Name="InputStreamAOX_ItemDataList" DataType="ObjectAOX" Mandatory="False" />  <Property Name="bDifferedProcessOperation" DataType="Boolean" Mandatory="False" />
+      <Property Name="InputStreamAOX_ItemDataList" DataType="ObjectAOX" Mandatory="False" />
+      <Property Name="bDifferedProcessOperation" DataType="Boolean" Mandatory="False" />
     </Class>
     <Class Name="OperationAOX_OutputText_OperationIterator_HtmlPages" Module="LibAOX">
       <Documentation>Opération d'itération pour générer un HTMLT multi-pages.
@@ -421,8 +449,46 @@ InputStreamAOX_Row : HTMLT de génération pour une ligne
       <Property Name="OutputStreamAOX_Text" DataType="ObjectAOX" Mandatory="False" />
       <Property Name="InputStreamAOX_ItemDataList" DataType="ObjectAOX" Mandatory="False" />
       <Property Name="bDifferedProcessOperation" DataType="Boolean" Mandatory="False" />
-      <Property Name="InputStreamAOX_Row" DataType="DynamicObjectAOX" Mandatory="True" /><Property Name="nFirstPageNumber" DataType="Integer" Mandatory="False" />
+      <Property Name="InputStreamAOX_Row" DataType="DynamicObjectAOX" Mandatory="True" />
+      <Property Name="nFirstPageNumber" DataType="Integer" Mandatory="False" />
       <Property Name="nbItemDataPerPage" DataType="Integer" Mandatory="False" />
+    </Class>
+    <Class Name="OperationAOX_OutputText_AoxCssFactory" Module="LibAOX">
+      <Property Name="InputStreamAOX" DataType="DynamicObjectAOX" Mandatory="True" />
+      <Property Name="OutputStreamAOX_Debug" DataType="DynamicObjectAOX" Mandatory="False" />
+      <Property Name="OutputStreamAOX_Result" DataType="DynamicObjectAOX" Mandatory="False" />
+      <Property Name="OutputStreamAOX_Text" DataType="ObjectAOX" Mandatory="False" />
+      <Property Name="bMinifiedVersion" DataType="Boolean" Mandatory="False" />
+    </Class>
+    <Class Name="OperationAOX_OutputText_OperationIterator_Html" Module="LibAOX">
+      <Documentation>Opération d'itération pour générer un HTMLT.
+En entrée : InputStreamAOX_ItemDataList.
+</Documentation>
+      <Property Name="InputStreamAOX" DataType="DynamicObjectAOX" Mandatory="True" />
+      <Property Name="OutputStreamAOX_Debug" DataType="DynamicObjectAOX" Mandatory="False" />
+      <Property Name="OutputStreamAOX_Result" DataType="DynamicObjectAOX" Mandatory="False" />
+      <Property Name="OutputStreamAOX_Text" DataType="ObjectAOX" Mandatory="False" />
+      <Property Name="InputStreamAOX_ItemDataList" DataType="ObjectAOX" Mandatory="False" />
+      <Property Name="bDifferedProcessOperation" DataType="Boolean" Mandatory="False" />
+    </Class>
+    <Class Name="OperationAOX_OutputText_OperationList_Heterogene" Module="LibAOX">
+      <Documentation>Opération prenant en entrée une liste d'opérations OperationAOX_OutputText.
+Les opérations sont exécutées dans l'ordre de la liste.
+</Documentation>
+      <Property Name="InputStreamAOX" DataType="DynamicObjectAOX" Mandatory="True" />
+      <Property Name="OutputStreamAOX_Debug" DataType="DynamicObjectAOX" Mandatory="False" />
+      <Property Name="OutputStreamAOX_Result" DataType="DynamicObjectAOX" Mandatory="False" />
+      <Property Name="OutputStreamAOX_Text" DataType="ObjectAOX" Mandatory="False" />
+      <Property Name="bStopOnError" DataType="Boolean" Mandatory="False" />
+    </Class>
+    <Class Name="OperationAOX_OutputText_CartAddLinkTo_MediaZip" Module="LibAOX">
+      <Documentation>Opération permettant de rattacher un media de type Zip à un panier.
+</Documentation>
+      <Property Name="InputStreamAOX" DataType="DynamicObjectAOX" Mandatory="True" />
+      <Property Name="OutputStreamAOX_Debug" DataType="DynamicObjectAOX" Mandatory="False" />
+      <Property Name="OutputStreamAOX_Result" DataType="DynamicObjectAOX" Mandatory="False" />
+      <Property Name="OutputStreamAOX_Text" DataType="ObjectAOX" Mandatory="False" />
+      <Property Name="Cart_Id" DataType="Integer" Mandatory="True" />
     </Class>
   </Category>
   <Category Name="OperationAOX_OutputBinary">
@@ -437,13 +503,17 @@ InputStreamAOX_Row : HTMLT de génération pour une ligne
       <Property Name="sPdfPageSize" DataType="String" Mandatory="False" />
       <Property Name="sPdfPageSize_Width" DataType="String" Mandatory="False" />
       <Property Name="sPdfPageSize_Height" DataType="String" Mandatory="False" />
-      <Property Name="nMargin_LR" DataType="Integer" Mandatory="False" />
+      <Property Name="nMargin_Left" DataType="Integer" Mandatory="False" />
+      <Property Name="nMargin_Top" DataType="Integer" Mandatory="False" />
+      <Property Name="nMargin_Right" DataType="Integer" Mandatory="False" />
+      <Property Name="nMargin_Bottom" DataType="Integer" Mandatory="False" />
       <Property Name="bCanEditContent" DataType="Boolean" Mandatory="False" />
       <Property Name="bSinglePage" DataType="Boolean" Mandatory="False" />
       <Property Name="bFitWidth" DataType="Boolean" Mandatory="False" />
       <Property Name="bFitHeight" DataType="Boolean" Mandatory="False" />
       <Property Name="bAutoSizePdfPage" DataType="Boolean" Mandatory="False" />
-      <Property Name="bJpegCompressionEnabled" DataType="Boolean" Mandatory="False" />  <Property Name="OutputStreamAOX_HTML" DataType="DynamicObjectAOX" Mandatory="False" />
+      <Property Name="bJpegCompressionEnabled" DataType="Boolean" Mandatory="False" />
+      <Property Name="OutputStreamAOX_HTML" DataType="DynamicObjectAOX" Mandatory="False" />
     </Class>
     <Class Name="OperationAOX_OutputBinary_CreateZip" Module="LibAOX">
       <Documentation>Opération permettant de créer un fichier Zip dont le contenu est fourni sous forme de InputStreamAOX_None_ListInput.
@@ -463,7 +533,8 @@ InputStreamAOX_Row : HTMLT de génération pour une ligne
       <Property Name="OutputStreamAOX_Binary" DataType="ObjectAOX" Mandatory="False" />
       <Property Name="CompressionMethod" DataType="String" Mandatory="False" />
       <Property Name="ZipFilePath" DataType="String" Mandatory="True" />
-    </Class><Class Name="OperationAOX_OutputBinary_MergePDF" Module="LibAOX">
+    </Class>
+    <Class Name="OperationAOX_OutputBinary_MergePDF" Module="LibAOX">
       <Documentation>Opération de concaténation de plusieurs sources au format PDF.
 </Documentation>
       <Property Name="InputStreamAOX" DataType="DynamicObjectAOX" Mandatory="True" />
@@ -476,7 +547,8 @@ InputStreamAOX_Row : HTMLT de génération pour une ligne
 Le fichier en entrée doit être nommé de la façon suivante : #CodeAppMedia#.#extension#.
 #CodeAppMedia# est utilisé pour retrouver le média à mettre à jour dans la BDD.
 </Documentation>
-      <Property Name="InputStreamAOX" DataType="DynamicObjectAOX" Mandatory="True" /><Property Name="OutputStreamAOX_Debug" DataType="DynamicObjectAOX" Mandatory="False" />
+      <Property Name="InputStreamAOX" DataType="DynamicObjectAOX" Mandatory="True" />
+      <Property Name="OutputStreamAOX_Debug" DataType="DynamicObjectAOX" Mandatory="False" />
       <Property Name="OutputStreamAOX_Result" DataType="DynamicObjectAOX" Mandatory="False" />
       <Property Name="OutputStreamAOX_Binary" DataType="ObjectAOX" Mandatory="False" />
       <Property Name="bUpdate" DataType="Boolean" Mandatory="False" />
@@ -495,8 +567,8 @@ En entrée : InputStreamAOX_ItemDataList.
       <Property Name="InputStreamAOX_ItemDataList" DataType="ObjectAOX" Mandatory="False" />
       <Property Name="bDifferedProcessOperation" DataType="Boolean" Mandatory="False" />
     </Class>
-     <Class Name="OperationAOX_OutputBinary_OperationIterator_CreateZip" Module="LibAOX">
-      <Documentation>Opération d'itération de base, le résultat étant au format zip.
+    <Class Name="OperationAOX_OutputBinary_OperationIterator_XLTableTemplate" Module="LibAOX">
+      <Documentation>Opération d'itération de base, le résultat étant au format texte.
 En entrée : InputStreamAOX_ItemDataList.
 </Documentation>
       <Property Name="InputStreamAOX" DataType="DynamicObjectAOX" Mandatory="True" />
@@ -506,7 +578,27 @@ En entrée : InputStreamAOX_ItemDataList.
       <Property Name="InputStreamAOX_ItemDataList" DataType="ObjectAOX" Mandatory="False" />
       <Property Name="bDifferedProcessOperation" DataType="Boolean" Mandatory="False" />
     </Class>
-  </Category> <Category Name="OperationAOX_OutputImage">
+    <Class Name="OperationAOX_OutputBinary_OperationIterator_CreateZip" Module="LibAOX">
+      <Documentation>Opération permettant de créer un fichier Zip.
+</Documentation>
+      <Property Name="InputStreamAOX" DataType="DynamicObjectAOX" Mandatory="True" />
+      <Property Name="OutputStreamAOX_Debug" DataType="DynamicObjectAOX" Mandatory="False" />
+      <Property Name="OutputStreamAOX_Result" DataType="DynamicObjectAOX" Mandatory="False" />
+      <Property Name="OutputStreamAOX_Binary" DataType="ObjectAOX" Mandatory="False" />
+      <Property Name="InputStreamAOX_ItemDataList" DataType="ObjectAOX" Mandatory="False" />
+      <Property Name="bDifferedProcessOperation" DataType="Boolean" Mandatory="False" />
+      <Property Name="CompressionMethod" DataType="String" Mandatory="False" />
+    </Class>
+    <Class Name="OperationAOX_OutputBinary_SaveBinary" Module="LibAOX">
+      <Documentation>Opération sur un fichier : sauvegarde dans un output (fichier, mémoire....) 
+</Documentation>
+      <Property Name="InputStreamAOX" DataType="DynamicObjectAOX" Mandatory="True" />
+      <Property Name="OutputStreamAOX_Debug" DataType="DynamicObjectAOX" Mandatory="False" />
+      <Property Name="OutputStreamAOX_Result" DataType="DynamicObjectAOX" Mandatory="False" />
+      <Property Name="OutputStreamAOX_Binary" DataType="ObjectAOX" Mandatory="False" />
+    </Class>
+  </Category>
+  <Category Name="OperationAOX_OutputImage">
     <Class Name="OperationAOX_OutputImage_HTML_To_Image" Module="LibAOX">
       <Documentation>Opération de génération d'une image à partir d'une entrée HTML.
 </Documentation>
@@ -522,7 +614,8 @@ En entrée : InputStreamAOX_ItemDataList.
       <Documentation>Opération de génération d'une image à partir d'une flux Web.
 </Documentation>
       <Property Name="InputStreamAOX" DataType="DynamicObjectAOX" Mandatory="True" />
-      <Property Name="OutputStreamAOX_Debug" DataType="DynamicObjectAOX" Mandatory="False" /> <Property Name="OutputStreamAOX_Result" DataType="DynamicObjectAOX" Mandatory="False" />
+      <Property Name="OutputStreamAOX_Debug" DataType="DynamicObjectAOX" Mandatory="False" />
+      <Property Name="OutputStreamAOX_Result" DataType="DynamicObjectAOX" Mandatory="False" />
       <Property Name="OutputStreamAOX_Image" DataType="ObjectAOX" Mandatory="False" />
       <Property Name="sTargetImageFormat" DataType="String" Mandatory="False" />
     </Class>
@@ -538,7 +631,8 @@ En entrée : InputStreamAOX_ItemDataList.
     </Class>
     <Class Name="OperationAOX_OutputImage_SaveImage" Module="LibAOX">
       <Documentation>Opération sur une image : sauvegarde dans un output (fichier, mémoire....) 
-</Documentation>  <Property Name="InputStreamAOX" DataType="DynamicObjectAOX" Mandatory="True" />
+</Documentation>
+      <Property Name="InputStreamAOX" DataType="DynamicObjectAOX" Mandatory="True" />
       <Property Name="OutputStreamAOX_Debug" DataType="DynamicObjectAOX" Mandatory="False" />
       <Property Name="OutputStreamAOX_Result" DataType="DynamicObjectAOX" Mandatory="False" />
       <Property Name="OutputStreamAOX_Image" DataType="ObjectAOX" Mandatory="False" />
@@ -553,7 +647,8 @@ En entrée : InputStreamAOX_ItemDataList.
       <Property Name="nWidthPixel" DataType="Integer" Mandatory="False" />
       <Property Name="nHeightPixel" DataType="Integer" Mandatory="False" />
       <Property Name="nMemSizeKo" DataType="Integer" Mandatory="False" />
-    </Class>  <Class Name="OperationAOX_OutputImage_Extend" Module="LibAOX">
+    </Class>
+    <Class Name="OperationAOX_OutputImage_Extend" Module="LibAOX">
       <Documentation>Opération sur une image : aggrandissement de l’image avec une couleur de fond.
 </Documentation>
       <Property Name="InputStreamAOX" DataType="DynamicObjectAOX" Mandatory="True" />
@@ -573,7 +668,8 @@ Le résultat est une image carrée, prenant la plus grande des deux dimensions d
       <Property Name="OutputStreamAOX_Result" DataType="DynamicObjectAOX" Mandatory="False" />
       <Property Name="OutputStreamAOX_Image" DataType="ObjectAOX" Mandatory="False" />
       <Property Name="BackgroundColor" DataType="String" Mandatory="False" />
-    </Class> <Class Name="OperationAOX_OutputImage_Border" Module="LibAOX">
+    </Class>
+    <Class Name="OperationAOX_OutputImage_Border" Module="LibAOX">
       <Documentation>Opération d'ajout de bordure à une image.
 La taille correspond à un ratio par rapport à la largeur OU à la hauteur de l'image source.
 La bordure agrandie l'image de ses dimensions respectives.
@@ -585,7 +681,8 @@ La bordure agrandie l'image de ses dimensions respectives.
       <Property Name="nWidthRatio" DataType="Integer" Mandatory="False" />
       <Property Name="nHeightRatio" DataType="Integer" Mandatory="False" />
       <Property Name="BorderColor" DataType="String" Mandatory="False" />
-    </Class> <Class Name="OperationAOX_OutputImage_QRCodeBitmap" Module="LibAOX">
+    </Class>
+    <Class Name="OperationAOX_OutputImage_QRCodeBitmap" Module="LibAOX">
       <Documentation>Opération de génération d'un QRCode sous forme d'image bitmap.
 </Documentation>
       <Property Name="InputStreamAOX" DataType="DynamicObjectAOX" Mandatory="True" />
@@ -598,7 +695,8 @@ La bordure agrandie l'image de ses dimensions respectives.
       <Documentation>Opération sur une image : remplacement d'une couleur par une autre couleur.
 </Documentation>
       <Property Name="InputStreamAOX" DataType="DynamicObjectAOX" Mandatory="True" />
-      <Property Name="OutputStreamAOX_Debug" DataType="DynamicObjectAOX" Mandatory="False" />  <Property Name="OutputStreamAOX_Result" DataType="DynamicObjectAOX" Mandatory="False" />
+      <Property Name="OutputStreamAOX_Debug" DataType="DynamicObjectAOX" Mandatory="False" />
+      <Property Name="OutputStreamAOX_Result" DataType="DynamicObjectAOX" Mandatory="False" />
       <Property Name="OutputStreamAOX_Image" DataType="ObjectAOX" Mandatory="False" />
       <Property Name="TargetColor" DataType="String" Mandatory="False" />
       <Property Name="FillColor" DataType="String" Mandatory="False" />
@@ -615,7 +713,8 @@ En entrée : InputStreamAOX_ItemDataList.
       <Property Name="InputStreamAOX_ItemDataList" DataType="ObjectAOX" Mandatory="False" />
       <Property Name="bDifferedProcessOperation" DataType="Boolean" Mandatory="False" />
     </Class>
-  </Category> <Category Name="OperationAOX_OutputItemDataList">
+  </Category>
+  <Category Name="OperationAOX_OutputItemDataList">
     <Class Name="OperationAOX_OutputItemDataList_Read_CSV" Module="LibAOX">
       <Documentation>Opération de lecture à partir d'une source au format CSV.
 La sortie est une liste OutputItemDataList.
@@ -632,7 +731,8 @@ La sortie est une liste OutputItemDataList.
       <Documentation>Opération de lecture à partir d'une requête SQL.
 La sortie est une liste OutputItemDataList.
 </Documentation>
-      <Property Name="InputStreamAOX" DataType="DynamicObjectAOX" Mandatory="True" />      <Property Name="OutputStreamAOX_Debug" DataType="DynamicObjectAOX" Mandatory="False" />
+      <Property Name="InputStreamAOX" DataType="DynamicObjectAOX" Mandatory="True" />
+      <Property Name="OutputStreamAOX_Debug" DataType="DynamicObjectAOX" Mandatory="False" />
       <Property Name="OutputStreamAOX_Result" DataType="DynamicObjectAOX" Mandatory="False" />
       <Property Name="OutputStreamAOX_ItemDataList" DataType="ObjectAOX" Mandatory="False" />
     </Class>
@@ -644,26 +744,8 @@ La sortie est une liste OutputItemDataList.
       <Property Name="OutputStreamAOX_Debug" DataType="DynamicObjectAOX" Mandatory="False" />
       <Property Name="OutputStreamAOX_Result" DataType="DynamicObjectAOX" Mandatory="False" />
       <Property Name="OutputStreamAOX_ItemDataList" DataType="ObjectAOX" Mandatory="False" />
-    </Class> <Class Name="OperationAOX_OutputItemDataList_Read_XML" Module="LibAOX">
-      <Documentation>Opération de lecture à partir d'une source au format XML.
-La sortie est une liste OutputItemDataList, chaque item étant un enfant de l'élément XML ciblé.
-</Documentation>
-      <Property Name="InputStreamAOX" DataType="DynamicObjectAOX" Mandatory="True" />
-      <Property Name="OutputStreamAOX_Debug" DataType="DynamicObjectAOX" Mandatory="False" />
-      <Property Name="OutputStreamAOX_Result" DataType="DynamicObjectAOX" Mandatory="False" />
-      <Property Name="OutputStreamAOX_ItemDataList" DataType="ObjectAOX" Mandatory="False" />
-      <Property Name="Selector" DataType="String" Mandatory="False" />
     </Class>
-    <Class Name="OperationAOX_OutputItemDataList_Read_JSON" Module="LibAOX">
-      <Documentation>Opération de lecture à partir d'une source au format JSON.
-La sortie est une liste OutputItemDataList, chaque item étant une ligne du tableau JSON ciblé.
-</Documentation>
-      <Property Name="InputStreamAOX" DataType="DynamicObjectAOX" Mandatory="True" />
-      <Property Name="OutputStreamAOX_Debug" DataType="DynamicObjectAOX" Mandatory="False" />
-      <Property Name="OutputStreamAOX_Result" DataType="DynamicObjectAOX" Mandatory="False" />
-      <Property Name="OutputStreamAOX_ItemDataList" DataType="ObjectAOX" Mandatory="False" />
-      <Property Name="Selector" DataType="String" Mandatory="False" />
-    </Class>  <Class Name="OperationAOX_OutputItemDataList_Read_XML_Agena" Module="LibAOX">
+    <Class Name="OperationAOX_OutputItemDataList_Read_XML_Agena" Module="LibAOX">
       <Documentation>Opération de lecture à partir d'une source au format XML ERP Agéna.
 La sortie est une liste OutputItemDataList.
 </Documentation>
@@ -673,7 +755,8 @@ La sortie est une liste OutputItemDataList.
       <Property Name="OutputStreamAOX_ItemDataList" DataType="ObjectAOX" Mandatory="False" />
       <Property Name="Selector" DataType="String" Mandatory="False" />
     </Class>
-  </Category> <Category Name="ImageAOXFormat">
+  </Category>
+  <Category Name="ImageAOXFormat">
     <Class Name="ImageAOXFormat_PNG" Module="LibAOX">
       <Property Name="SubFormat" DataType="String" Mandatory="False" />
       <Property Name="nCompression" DataType="Integer" Mandatory="False" />
