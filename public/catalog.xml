@@ -238,6 +238,7 @@ Le chemin peut utiliser la macro '%resource_folder%' (remplacé par le paramètr
 </Documentation>
       <Property Name="OutputLabel" DataType="String" Mandatory="False" />
       <Property Name="sTypeMime" DataType="String" Mandatory="True" />
+      <Property Name="sDisposition" DataType="String" Mandatory="False" />
     </Class>
     <Class Name="OutputStreamAOX_Binary_DBMedia" Module="LibAOX">
       <Documentation>OutputStream : média stocké en BLOB dans une base AOX, créé dans le folder désigné par son Folder_AppCode.
