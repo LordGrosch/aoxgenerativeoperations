@@ -14,6 +14,12 @@
       "extensions": [".xml", ".xmlt", ".htmlt"],
       "color": "#fef08a",
       "note": "Jaune distinct : ce fichier référence un autre document d'opération (template .xmlt/.htmlt ou sous-workflow .xml), pas une simple donnée/sortie brute."
+    },
+    {
+      "paramName": "FilePath",
+      "extensions": [".txt"],
+      "color": "#CCCCCC",
+      "note": "Gris distinct : ce fichier est pour les logs, sortie donnée brute."
     }
   ]
 }
